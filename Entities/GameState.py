@@ -9,11 +9,11 @@ class GameState():
     audienceVisibleCards = []
     invisibleCards = []
 
-    def __init__(self, _deck, _players, _tableCards, _visibleTableCards, _audienceVisibleCards, _invisibleCards):
+    def __init__(self, args):
 
-        self.deck = _deck
-        self.players =  _players
-        self.tableCards = _tableCards
-        self.visibleTableCards = _visibleTableCards
-        self.audienceVisibleCards = _audienceVisibleCards
-        self.invisibleCards = _invisibleCards
+        self.deck = args[0]
+        self.players =  args[1]
+        self.tableCards = args[2]
+        self.visibleTableCards = args[3]
+        self.audienceVisibleCards = args[4]
+        self.invisibleCards = args[5]
