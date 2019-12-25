@@ -147,6 +147,14 @@ Methods and lists:
 
 Structures, storage/harcode:
 
+    Kicker Enum:
+        Conversion from numeric to name :
+            1 - Ace
+            2 - Duce
+            3 - 3
+            4 - 4
+            11 - Jack
+            etc..
     Suits Enum:
         - Hearts
         - Clubs
