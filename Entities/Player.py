@@ -1,4 +1,4 @@
-class player():
+class Player():
 
     Id = -1
     cards = []

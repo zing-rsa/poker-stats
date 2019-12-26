@@ -2,7 +2,7 @@ import enum
 
 class KickerEnum(enum.Enum):
     Ace = 1
-    Duce = 2
+    _2 = 2
     _3 = 3
     _4 = 4
     _5 = 5

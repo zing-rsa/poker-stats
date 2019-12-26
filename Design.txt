@@ -42,7 +42,7 @@ Entities:
                     visibleTableCards - list of visible table cards
 
     
-    gameState:
+    gameState: (Table?)
         Props:
             Deck - deck of 52 cards
 

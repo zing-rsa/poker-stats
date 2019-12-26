@@ -1,5 +1,5 @@
-from Entities.SuitsEnum import Suits
-from Entities.KickerEnum import KickerEnum
+from Entities.Suits import Suits
+from Entities.Kicker import KickerEnum
 
 class Card():
 

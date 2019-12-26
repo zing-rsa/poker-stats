@@ -1,19 +1,7 @@
-import sys
-sys.path.append('/Entities/')
-from Entities.SuitsEnum import Suits
+from Entities.Table import Table
+from Entities.Suits import Suits
 from Entities.Card import Card
-from Entities.Dealer import Dealer
-from Entities.GameState import GameState
 
-testcard = Card(1, 1, Suits.Hearts)
+t = Table(2)
 
-print(testcard.toString())
-
-gs = GameState([[],[],[],[],[],[]])
-
-d = Dealer(gs)
-
-d.generateDeck()
-
-d.printDeck()
-
+t.printDeck()
