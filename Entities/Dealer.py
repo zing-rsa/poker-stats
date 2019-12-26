@@ -1,10 +1,16 @@
 
 from Entities.Suits import Suits
 from Entities.Card import Card
+from Entities.TableCard import TableCard 
 import math
 import random
 
 class Dealer():
+    deck = []
+    usedCards = []
+
+    def __init__(self):
+        self.deck = self.generateDeck()
 
     def generateDeck(self):
         outDeck = []
@@ -16,10 +22,57 @@ class Dealer():
     def dealCards(self):
         pass
 
-    def produceRandomCard(self, deck):
+    def produceRandomCard(self):
         index = random.randint(0,51)
-        tempCard = deck[index]
+        # prevent duplication 
+        while index in self.usedCards:
+            index = random.randint(0,51)
+        tempCard = self.deck[index]
         return tempCard
+
+    def producePlayerCards(self, playerCount):
+        cardsOut = []
+
+        for p in range(playerCount):
+            cardsOut.append([])
+
+        for i in range(2):
+            for p in range(playerCount):
+                tempCard = self.produceRandomCard()
+                self.usedCards.append(tempCard.id)
+                cardsOut[p].append(tempCard)
+
+        return cardsOut
+
+    def produceTableCards(self):
+        cardsOut = []
+
+        for i in range(5):
+            tempCard = self.produceRandomCard()
+            tempTableCard = TableCard(tempCard.id, tempCard.value, tempCard.suit, False)
+            self.usedCards.append(tempTableCard.id)
+            cardsOut.append(tempTableCard)
+
+        return cardsOut
+
+    def flipCard(self, tableCards):
+
+        if not tableCards[2].visible:
+            for i in range(3):
+                tableCards[i].visible = True
+        elif not tableCards[3].visible:
+            tableCards[3].visible = True
+        else: 
+            tableCards[4].visible = True
+
+        return tableCards
+
+
+
+
+
+
+
 
 
 
