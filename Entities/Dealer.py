@@ -2,6 +2,7 @@
 from Entities.Suits import Suits
 from Entities.Card import Card
 import math
+import random
 
 class Dealer():
 
@@ -13,7 +14,14 @@ class Dealer():
         return outDeck
 
     def dealCards(self):
-        pass 
+        pass
+
+    def produceRandomCard(self, deck):
+        index = random.randint(0,51)
+        tempCard = deck[index]
+        return tempCard
+
+
 
              
 
