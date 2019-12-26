@@ -4,4 +4,6 @@ from Entities.Card import Card
 
 t = Table(2)
 
-t.printDeck()
+t.startNewHand()
+
+t.printPlayers()
