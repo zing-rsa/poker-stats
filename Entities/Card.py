@@ -13,4 +13,4 @@ class Card():
         self.suit = _suit
     
     def toString(self):
-        return f"id: {self.id}, {KickerEnum(self.value).name} of {self.suit.name}"
+        return f"{str(KickerEnum(self.value).name).replace('_','')} of {self.suit.name}"
