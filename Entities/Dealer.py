@@ -27,6 +27,7 @@ class Dealer():
         # prevent duplication 
         while index in self.usedCards:
             index = random.randint(0,51)
+        self.usedCards.append(index)
         tempCard = self.deck[index]
         return tempCard
 
@@ -39,7 +40,6 @@ class Dealer():
         for i in range(2):
             for p in range(playerCount):
                 tempCard = self.produceRandomCard()
-                self.usedCards.append(tempCard.id)
                 cardsOut[p].append(tempCard)
 
         return cardsOut
@@ -50,7 +50,6 @@ class Dealer():
         for i in range(5):
             tempCard = self.produceRandomCard()
             tempTableCard = TableCard(tempCard.id, tempCard.value, tempCard.suit, False)
-            self.usedCards.append(tempTableCard.id)
             cardsOut.append(tempTableCard)
 
         return cardsOut
