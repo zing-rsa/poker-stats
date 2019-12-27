@@ -1,3 +1,11 @@
+#  Verfied test case:
+#9S 3S 24% -> 2% 
+#AC JH 50% -> 79% 
+#AD 9D 18% -> 13% 
+#Split 8% -> 6% (chance nobody has hightest cards)
+# flop 2D AH 6H
+
+
 Required lists of cards:
     Table cards - 5 cards on the table
     Visible table cards - table cards that have been flipped over
