@@ -7,32 +7,49 @@ class PokerStatter():
     
     visibleCards = []
     
-    def __init__(self, _visibleCards):
-        self.visibleCards = _visibleCards
+    def genChancePerPlayer(self, allCardsDict, playerCount):
 
+        chancesPerPlayer = {}
 
-    def genRequiredCards(self, _visibleCards):
-        self.visibleCards = _visibleCards
-        _onePairReq = self.checkFor1Pair()
-
-        return _onePairReq
-
-    def checkFor1Pair(self):
-
-        cardsOut = []
+        for pi in range(playerCount):
+            chancesPerPlayer[pi] = self.chanceOfOnePair(allCardsDict, pi)
         
-        for c in self.visibleCards:
-            for v in self.visibleCards:
-                if (c.value == v.value) and (c.suit == v.suit):
-                    continue
-                elif c.value == v.value:
-                    return []
-                    
-            cardsOut.append(Card(-1, c.value, Suits.Undefined))
+        return chancesPerPlayer
 
-        return cardsOut
+    
+    def chanceOfOnePair(self, allCardsDict, playerId):
+                              
+        totalChance = 0 
 
+        audienceCards = []
+
+        for key in allCardsDict:
+            audienceCards = audienceCards + allCardsDict[key]
+
+        remainCardsDict = self.retrieveRemainingCards(audienceCards)
+
+        remainingCardsCount = float(52 - len(audienceCards))
+
+        onePairReqirementsForPlayer = self.genRequiredCards(allCardsDict["TableCards"] + allCardsDict[playerId])
+
+        for c in onePairReqirementsForPlayer:
+            totalChance += self.chanceOfGettingCard(remainingCardsCount, remainCardsDict[c.value])
+
+        return  totalChance
         
+    def retrieveRemainingCards(self, visibleCards):
+        occurencesPerCard = self.getOccurencesPerCard(visibleCards)
+        remaining = {}
+
+        for i in range(13):
+            if (i+1) in occurencesPerCard:
+                remaining[i+1] = 4 - occurencesPerCard[i+1]
+            else:
+                remaining[i+1] = 4
+
+        pprint.pprint(remaining)
+        return remaining
+
     def getOccurencesPerCard(self, visibleCards):
         tempDict = {}
 
@@ -46,26 +63,29 @@ class PokerStatter():
 
         return tempDict
 
+    def chanceOfGettingCard(self, cardCount, cardsLeft):
+        return float(cardsLeft/cardCount)
 
-    def retrieveRemainingCards(self, visibleCards):
-        occurencesPerCard = self.getOccurencesPerCard(visibleCards)
-        remaining = {}
+    def genRequiredCards(self, visibleCards):
 
-        for i in range(13):
-            if (i+1) in occurencesPerCard:
-                remaining[i+1] = 4 - occurencesPerCard[i+1]
-            else:
-                remaining[i+1] = 4
+        _onePairReq = self.checkFor1Pair(visibleCards)
 
-        pprint.pprint(remaining)
-        return remaining
+        return _onePairReq
+
+    def checkFor1Pair(self,visibleCards):
+
+        cardsOut = []
         
+        for c in visibleCards:
+            for v in visibleCards:
+                if (c.value == v.value) and (c.suit == v.suit):
+                    continue
+                elif c.value == v.value:
+                    return []
+                    
+            cardsOut.append(Card(-1, c.value, Suits.Undefined))
 
-    def chanceOfOnePair(self, visibleCards):
-                              
-        totalChance = 0 
-        remainCardsDict = self.retrieveRemainingCards(visibleCards)
-        remainingCardsCount = float(52 - len(visibleCards))
+        return cardsOut
 
         # do this line per player
         # only pass in cards for each player at a time
@@ -73,14 +93,3 @@ class PokerStatter():
         # player 1 cards, players2 cards, and all table cards. Then use 
         # that to pass player ones visible cards to the method to determind 
         # his potention chance of getting what he needs
-
-        _onePairReq = self.genRequiredCards(visibleCards)
-
-        for c in _onePairReq:
-            totalChance += self.chanceOfGettingCard(remainingCardsCount, remainCardsDict[c.value])
-
-        return  totalChance
-        
-        
-    def chanceOfGettingCard(self, cardCount, cardsLeft):
-        return float(cardsLeft/cardCount)

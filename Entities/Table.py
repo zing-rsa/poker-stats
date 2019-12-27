@@ -66,6 +66,21 @@ class Table():
 
         return cardsOut
 
+    def getAllCardsDict(self):
+
+        cardsDict = {}
+
+        for p in self.players:
+            cardsDict[p.Id] = p.cards
+        
+        tableCards = []
+
+        for c in self.tableCards:
+            if c.visible:
+                tableCards.append(c)
+        cardsDict["TableCards"] = tableCards
+
+
     
     
 
