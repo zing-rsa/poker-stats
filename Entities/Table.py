@@ -41,26 +41,32 @@ class Table():
             self.players[i].cards = cardSet
             i=i+1
 
-    def printTableCardsExposed(self):
-        for c in self.tableCards:
-            print(c.toString())
+    def getVisibleCards(self, pIndex):
+        cardsOut = []
 
-    def printTableCards(self):
         for c in self.tableCards:
             if c.visible:
-                print(c.toString())
-            else:
-                print("...")
+                cardsOut.append(c)
 
-    def printPlayers(self):
-        for p in range(len(self.players)):
-            for c in range(2):
-                print(f"Player: {p+1}, card({c+1}): {self.players[p].cards[c].toString()}")
+        for c in self.players[pIndex].cards:
+            cardsOut.append(c)
 
-    def printDeck(self):
-        for card in self.deck:
-            print(card.toString())
+        return cardsOut
 
+    def getAudienceVisibleCards(self):
+        cardsOut = []
+
+        for c in self.tableCards:
+            if c.visible:
+                cardsOut.append(c)
+
+        for c in self.players:
+            for i in range(2):
+                cardsOut.append(c.cards[i])
+
+        return cardsOut
+
+    
     
 
 
