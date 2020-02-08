@@ -1,36 +1,79 @@
 from Entities.Suits import Suits
 from Entities.Card import Card
 from Entities.Player import Player
-import pprint
+from Entities.Hand import handEnum
 
 class PokerStatter():
     
     visibleCards = []
+
+    allCardsDict = {}
+    remainCardsDict = {}
+    audienceCards = []
+
+    def getHighestCurrentHand(self):
+        return handEnum.default
     
-    def genChancePerPlayer(self, allCardsDict, playerCount):
+    def genChancePerPlayer(self, allCardsDict, players):
 
-        chancesPerPlayer = {}
 
-        for pi in range(playerCount):
-            chancesPerPlayer[pi] = self.chanceOfOnePair(allCardsDict, pi)
-        
-        return chancesPerPlayer
-
-    
-    def chanceOfOnePair(self, allCardsDict, playerId):
-                              
-        totalChance = 0 
-
+        chancesPerPlayer = {} 
         audienceCards = []
 
         for key in allCardsDict:
             audienceCards = audienceCards + allCardsDict[key]
 
         remainCardsDict = self.retrieveRemainingCards(audienceCards)
+        
+        for p in players:
+            p.handsToCheck = self.getPossibleHands(allCardsDict, p, remainCardsDict, audienceCards) # this will need to be filtered by what is above the currentHighestHand
+            
+
+        return chancesPerPlayer
+
+    def getPossibleHands(self, allCardsDict, player, remainCardsDict, audienceCards):
+
+        possibleHands = []
+
+        player.handChances = self.getHandChances(allCardsDict, player, remainCardsDict, audienceCards)
+        
+        for h, c in player.handChances.items():
+            #Possible outcomes
+            # 1 - player hit hand - need to check his currentHighestHand
+            # % - some percent chance of player getting that card
+            # 0 - player cannot hit 
+
+            if c != 0:
+                possibleHands.append(h)
+
+        return "test"
+
+    def getHandChances(self, allCardsDict, player, remainCardsDict, audienceCards):
+
+        chancesPerHand = {
+            "onePair" : self.chanceOfOnePair(allCardsDict, player, remainCardsDict, audienceCards)
+            #handEnum[3] : self.chanceOfTwoPair
+            #handEnum[4] : self.chanceOfTrips
+            #handEnum[5] : self.chanceOfStraight
+            #handEnum[6] : self.chanceOfFlush
+            #handEnum[7] : self.chanceOfFullHouse
+            #handEnum[8] : self.chanceOfQuads
+            #handEnum[9] : self.chanceOfStraightFlush
+        }
+
+        return chancesPerHand
+    
+    def chanceOfOnePair(self,  allCardsDict, player, remainCardsDict, audienceCards):
+                              
+        totalChance = 0 
 
         remainingCardsCount = float(52 - len(audienceCards))
 
-        onePairReqirementsForPlayer = self.genRequiredCards(allCardsDict["TableCards"] + allCardsDict[playerId])
+        onePairReqirementsForPlayer = self.genRequiredCards(allCardsDict["TableCards"] + allCardsDict[player.Id])
+
+        if len(onePairReqirementsForPlayer) == 0:
+            # player has hit one pair
+            return 1
 
         for c in onePairReqirementsForPlayer:
             totalChance += self.chanceOfGettingCard(remainingCardsCount, remainCardsDict[c.value])
@@ -47,7 +90,8 @@ class PokerStatter():
             else:
                 remaining[i+1] = 4
 
-        pprint.pprint(remaining)
+        print("\nRemaining cards: " + str(remaining))
+
         return remaining
 
     def getOccurencesPerCard(self, visibleCards):
@@ -58,8 +102,6 @@ class PokerStatter():
                 tempDict[c.value] = tempDict[c.value] + 1 
             else:
                 tempDict[c.value] = 1
-                
-        pprint.pprint(tempDict)
 
         return tempDict
 
@@ -79,8 +121,10 @@ class PokerStatter():
         for c in visibleCards:
             for v in visibleCards:
                 if (c.value == v.value) and (c.suit == v.suit):
+                    #skip if the same card
                     continue
                 elif c.value == v.value:
+                    #Found 1 pair - return 0 required cards
                     return []
                     
             cardsOut.append(Card(-1, c.value, Suits.Undefined))
