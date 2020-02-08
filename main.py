@@ -13,33 +13,28 @@ pr.printPlayers(t.players)
 
 print("\nExposed Table:", end="\n\n")
 
-pr.printTableCards(t.tableCards)
+pr.printCards(t.tableCards)
 
 p = PokerStatter()
 
-chancesPerPlayer = p.genChancePerPlayer(t.getAllCardsDict(), t.playerCount)
-
-for key in chancesPerPlayer:
-    print(f"Player: {key} has {chancesPerPlayer[key]}% chance of winning")
+p.genChancePerPlayer(t.getAllCardsDict(), t.players)
 
 
 
 
 
+#chancesPerPlayer = 
+
+#for key in chancesPerPlayer:
+#    print(f"Player: {key} has {chancesPerPlayer[key]}% chance of winning")
 
 
+#for pi in range(len(t.players)):
 
+#    p = PokerStatter(t.getVisibleCards(pi))
 
-
-
-for pi in range(len(t.players)):
-
-    p = PokerStatter(t.getVisibleCards(pi))
-
-chance = p.chanceOfOnePair(t.getAudienceVisibleCards())
-print(f"\nChance of player {pi+1} getting 1 pair: {pr.printPercentChance(chance)}")
-
-
+#chance = p.chanceOfOnePair(t.getAudienceVisibleCards())
+#print(f"\nChance of player {pi+1} getting 1 pair: {pr.printPercentChance(chance)}")
 # chanceOfOnePair
 # {"playerOneCards": [,]}
 # {"plasydfsfsdf", [,]}
