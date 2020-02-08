@@ -1,6 +1,7 @@
 import enum
 
 class handEnum(enum.Enum):
+    default = 0
     highCard = 1
     onePair = 2
     twoPair = 3

@@ -80,6 +80,8 @@ class Table():
                 tableCards.append(c)
         cardsDict["TableCards"] = tableCards
 
+        return cardsDict
+
 
     
     

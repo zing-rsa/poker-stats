@@ -1,7 +1,12 @@
+from Entities.Hand import handEnum
+
 class Player():
 
     Id = -1
     cards = []
+    currentHighHand = handEnum.default
+    handChances = {}
+    handsToCheck = []
 
     def __init__(self, _Id, _cards):
         self.Id = _Id
