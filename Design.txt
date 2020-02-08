@@ -323,8 +323,8 @@ Approach to determine probability of winning hand:
                 build into this method to check for royal? 
             method to check fullhouse
                 
+Future Plans:
 
-
-
-    
-
+Create a method that can determine the higher of two hands
+eg if two people have a straight, who wins. 
+Make it dynamic so we can use it across all hands, including winning by high cards
