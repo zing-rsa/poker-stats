@@ -16,8 +16,7 @@ class PokerStatter():
     
     def genChancePerPlayer(self, allCardsDict, players):
 
-
-        chancesPerPlayer = {} 
+        chancesPerPlayer = {}
         audienceCards = []
 
         for key in allCardsDict:
@@ -25,18 +24,22 @@ class PokerStatter():
 
         remainCardsDict = self.retrieveRemainingCards(audienceCards)
         
+        self.allCardsDict = allCardsDict
+        self.remainCardsDict = remainCardsDict
+        self.audienceCards = audienceCards
+
         for p in players:
-            p.handsToCheck = self.getPossibleHands(allCardsDict, p, remainCardsDict, audienceCards) # this will need to be filtered by what is above the currentHighestHand
+            p.handsToCheck = self.getPossibleHands(p) # this will need to be filtered by what is above the currentHighestHand
             
 
         return chancesPerPlayer
 
-    def getPossibleHands(self, allCardsDict, player, remainCardsDict, audienceCards):
+    def getPossibleHands(self, player):
 
-        possibleHands = []
+        possibleHands = {}
 
-        player.handChances = self.getHandChances(allCardsDict, player, remainCardsDict, audienceCards)
-        
+        player.handChances = self.getHandChances(player)
+
         for h, c in player.handChances.items():
             #Possible outcomes
             # 1 - player hit hand - need to check his currentHighestHand
@@ -44,14 +47,14 @@ class PokerStatter():
             # 0 - player cannot hit 
 
             if c != 0:
-                possibleHands.append(h)
+                possibleHands[h] = c
 
-        return "test"
+        return possibleHands
 
-    def getHandChances(self, allCardsDict, player, remainCardsDict, audienceCards):
+    def getHandChances(self, player):
 
         chancesPerHand = {
-            "onePair" : self.chanceOfOnePair(allCardsDict, player, remainCardsDict, audienceCards)
+            "onePair" : self.chanceOfOnePair(player)
             #handEnum[3] : self.chanceOfTwoPair
             #handEnum[4] : self.chanceOfTrips
             #handEnum[5] : self.chanceOfStraight
@@ -63,20 +66,20 @@ class PokerStatter():
 
         return chancesPerHand
     
-    def chanceOfOnePair(self,  allCardsDict, player, remainCardsDict, audienceCards):
+    def chanceOfOnePair(self, player):
                               
         totalChance = 0 
 
-        remainingCardsCount = float(52 - len(audienceCards))
+        remainingCardsCount = float(52 - len(self.audienceCards))
 
-        onePairReqirementsForPlayer = self.genRequiredCards(allCardsDict["TableCards"] + allCardsDict[player.Id])
+        onePairReqirementsForPlayer = self.genRequiredCards(self.allCardsDict["TableCards"] + self.allCardsDict[player.Id])
 
         if len(onePairReqirementsForPlayer) == 0:
             # player has hit one pair
             return 1
 
         for c in onePairReqirementsForPlayer:
-            totalChance += self.chanceOfGettingCard(remainingCardsCount, remainCardsDict[c.value])
+            totalChance += self.chanceOfGettingCard(remainingCardsCount, self.remainCardsDict[c.value])
 
         return  totalChance
         
