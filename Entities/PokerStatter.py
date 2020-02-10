@@ -28,11 +28,32 @@ class PokerStatter():
         self.remainCardsDict = remainCardsDict
         self.audienceCards = audienceCards
 
+        currentHighestHand = handEnum.default
+
         for p in players:
-            p.handsToCheck = self.getPossibleHands(p) # this will need to be filtered by what is above the currentHighestHand
+            if p.currentHighestHand.value > currentHighestHand.value:
+                currentHighestHand = p.currentHighestHand
+            
+
+        for p in players:
+            p.handsToCheck = self.getHandsToCheck(p, currentHighestHand) # this will need to be filtered by what is above the currentHighestHand
             
 
         return chancesPerPlayer
+
+    def getHandsToCheck(self, player, currentHighestHand):
+        possibleHands = self.getPossibleHands(player)
+
+        handsToCheck = {}
+
+        for h, c in possibleHands:
+            if handEnum[h] > handEnum[currentHighestHand]:
+                
+                
+
+        return handsToCheck
+
+
 
     def getPossibleHands(self, player):
 
