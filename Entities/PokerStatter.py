@@ -13,6 +13,12 @@ class PokerStatter():
 
     def getHighestCurrentHand(self):
         return handEnum.default
+
+    def beatsHand(self,hands):
+        
+        
+
+        pass
     
     def genChancePerPlayer(self, allCardsDict, players):
 
@@ -20,6 +26,8 @@ class PokerStatter():
         audienceCards = []
 
         for key in allCardsDict:
+            if key == "leftOverCards":
+                continue
             audienceCards = audienceCards + allCardsDict[key]
 
         remainCardsDict = self.retrieveRemainingCards(audienceCards)
@@ -48,10 +56,9 @@ class PokerStatter():
 
         for h, c in possibleHands:
             if handEnum[h] > handEnum[currentHighestHand]:
+                pass
                 
-                
-
-        return handsToCheck
+        return "test"
 
 
 
@@ -93,13 +100,13 @@ class PokerStatter():
 
         remainingCardsCount = float(52 - len(self.audienceCards))
 
-        onePairReqirementsForPlayer = self.genRequiredCards(self.allCardsDict["TableCards"] + self.allCardsDict[player.Id])
+        onePairReqirements = self.getOnePairCards(self.allCardsDict["TableCards"] + self.allCardsDict[player.Id])
 
-        if len(onePairReqirementsForPlayer) == 0:
+        if len(onePairReqirements) == 0:
             # player has hit one pair
             return 1
 
-        for c in onePairReqirementsForPlayer:
+        for c in onePairReqirements:
             totalChance += self.chanceOfGettingCard(remainingCardsCount, self.remainCardsDict[c.value])
 
         return  totalChance
@@ -132,13 +139,7 @@ class PokerStatter():
     def chanceOfGettingCard(self, cardCount, cardsLeft):
         return float(cardsLeft/cardCount)
 
-    def genRequiredCards(self, visibleCards):
-
-        _onePairReq = self.checkFor1Pair(visibleCards)
-
-        return _onePairReq
-
-    def checkFor1Pair(self,visibleCards):
+    def getOnePairCards(self,visibleCards):
 
         cardsOut = []
         
@@ -161,3 +162,52 @@ class PokerStatter():
         # player 1 cards, players2 cards, and all table cards. Then use 
         # that to pass player ones visible cards to the method to determind 
         # his potention chance of getting what he needs
+    def printVisibleCards(self, visibleCards):
+        audienceCards = []
+        for card in visibleCards:
+            for item in card:
+                audienceCards.append(item)
+        return audienceCards
+
+    def getFlushCards(self, visibleCards):  
+        
+       #[{"id":1,"suit": "H", "value": 2},{"id":2,"suit": "C", "value": 4}]
+
+        hearts_count = 0
+        diamonds_count = 0
+        spades_count = 0
+        clubs_count = 0
+        
+        suitforflush = ""
+        
+        for card in visibleCards:
+            if card.suit == Suits.Hearts:
+                hearts_count +=1
+            if card.suit == Suits.Diamonds:
+                diamonds_count +=1
+            if card.suit == Suits.Spades:
+                spades_count +=1
+            if card.suit == Suits.Clubs:
+                clubs_count +=1
+        
+        if (hearts_count or diamonds_count or spades_count or clubs_count) >=3:
+            print("The flush is possible")
+            
+        #suit with higest count to see which cards are needed to completet the flush
+        highest = max(hearts_count, diamonds_count, spades_count, clubs_count)
+        if hearts_count == highest:
+            suitforflush = "hearts"    
+        
+        if diamonds_count == highest:
+            suitforflush = "diamonds"    
+        
+        if spades_count == highest:
+            suitforflush = "spades"    
+        
+        if clubs_count == highest:
+            suitforflush = "clubs"
+        
+        self.allCardsDict["leftOverCards"]
+
+            
+        
