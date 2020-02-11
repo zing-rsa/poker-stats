@@ -328,3 +328,16 @@ Future Plans:
 Create a method that can determine the higher of two hands
 eg if two people have a straight, who wins. 
 Make it dynamic so we can use it across all hands, including winning by high cards
+
+PokerStater methods pattern:
+
+    genChanceperplayer - return a list with the chance that each player has of winning a hand
+                       - called once per hand
+
+    More to come here
+
+    gethandsToCheck - return a list of hands filtered on whether they can win/are relevant
+    getPossibleHands - return a list of all possible hands
+    getHandChances - return a list of possibe hands with the total chances of each occuring built from ChanceOfX of each hand
+    ChanceOfX - return total chance as it stands of getting the cards returned from getXCards
+    getXCards - return list of cards required to get X
