@@ -2,13 +2,13 @@ from Entities.Suits import Suits
 from Entities.Kicker import KickerEnum
 
 class TableCard():
-    id = -1
+    Id = -1
     value = -1
     suit = Suits.Undefined
     visible = True
 
     def __init__(self, _id, _value, _suit, _visible):
-        self.id = _id
+        self.Id = _id
         self.value = _value
         self.suit = _suit
         self.visible = _visible
