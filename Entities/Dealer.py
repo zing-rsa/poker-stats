@@ -49,10 +49,20 @@ class Dealer():
 
         for i in range(5):
             tempCard = self.produceRandomCard()
-            tempTableCard = TableCard(tempCard.id, tempCard.value, tempCard.suit, False)
+            tempTableCard = TableCard(tempCard.Id, tempCard.value, tempCard.suit, False)
             cardsOut.append(tempTableCard)
 
         return cardsOut
+
+    def produceLeftOverCards(self):
+        leftoverCards = []
+
+        for card in self.deck:
+            if card.Id not in self.usedCards:
+                leftoverCards.append(card)
+
+        return leftoverCards
+
 
     def flipCard(self, tableCards):
 
@@ -65,6 +75,12 @@ class Dealer():
             tableCards[4].visible = True
 
         return tableCards
+
+    def getCard(self, id):
+        for card in self.deck:
+            if card.Id == id:
+                return card
+
 
 
 

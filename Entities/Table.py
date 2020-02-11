@@ -41,6 +41,9 @@ class Table():
             self.players[i].cards = cardSet
             i=i+1
 
+    def getLeftOverCards(self):
+        return self.dealer.produceLeftOverCards()
+
     def getVisibleCards(self, pIndex):
         cardsOut = []
 
@@ -69,16 +72,17 @@ class Table():
     def getAllCardsDict(self):
 
         cardsDict = {}
+        tableCards = []
 
         for p in self.players:
             cardsDict[p.Id] = p.cards
         
-        tableCards = []
-
         for c in self.tableCards:
             if c.visible:
                 tableCards.append(c)
         cardsDict["TableCards"] = tableCards
+
+        cardsDict["leftOverCards"] = self.getLeftOverCards()
 
         return cardsDict
 
