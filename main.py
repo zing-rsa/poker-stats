@@ -13,14 +13,19 @@ pr.printPlayers(t.players)
 
 print("\nExposed Table:", end="\n\n")
 
-pr.printCards(t.tableCards)
-
 p = PokerStatter()
 
 p.genChancePerPlayer(t.getAllCardsDict(), t.players)
 
 
 
+        # {
+
+        #     "p1": [{"h","1"}, {"c","4"}],
+        #     "p2": [{"h","1"}, {"c","4"}],
+        #     "table": [{"h","1"}, {"c","4"},{"h","1"}, {"c","4"},{"h","1"}]
+        #     "leftout" 
+        # }
 
 
 
@@ -32,22 +37,22 @@ p.genChancePerPlayer(t.getAllCardsDict(), t.players)
 
 
 
-P1
+# P1
 
-one pair = 15%
-two pair = 10%
-trips 10%
-straight 3%
+# one pair = 15%
+# two pair = 10%
+# trips 10%
+# straight 3%
 
-26
+# 26
 
-P2
+# P2
 
-one pair 15%
-two pair 10%
-straight 5%
+# one pair 15%
+# two pair 10%
+# straight 5%
 
-30%
+# 30%
 
 
 
@@ -76,29 +81,29 @@ straight 5%
 # {"tableCards": [,,,,]}
 
 
-P1 
+# P1 
 
-one = 100
-two = 0
-trips = 4.5   
-str = 0
-flush 0
-fullhouse 0
-quds 0
-strflush 0
+# one = 100
+# two = 0
+# trips = 4.5   
+# str = 0
+# flush 0
+# fullhouse 0
+# quds 0
+# strflush 0
 
-9
+# 9
 
-P2
+# P2
 
-one 100
-two = 0
-trips = 100
-str = 0
-flush = 0
-fullhouse = 0
-quds = 2.3
-strflush = 0
+# one 100
+# two = 0
+# trips = 100
+# str = 0
+# flush = 0
+# fullhouse = 0
+# quds = 2.3
+# strflush = 0
 
 
-4.5/102.3
+# 4.5/102.3
