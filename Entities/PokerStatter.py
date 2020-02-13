@@ -111,9 +111,11 @@ class PokerStatter():
 
         return  totalChance
         
-    def retrieveRemainingCards(self, visibleCards):
-        occurencesPerCard = self.getOccurencesPerCard(visibleCards)
+    def retrieveRemainingCards(self, cardSet):
+
+        occurencesPerCard = self.getOccurencesPerCard(cardSet)
         remaining = {}
+        suits = ["C","H","S","D"]
 
         for i in range(13):
             if (i+1) in occurencesPerCard:
@@ -121,18 +123,31 @@ class PokerStatter():
             else:
                 remaining[i+1] = 4
 
+        for s in suits:
+            if s in occurencesPerCard:
+                remaining[s] = 13 - occurencesPerCard[s]
+            else:
+                remaining[s] = 13
+
         print("\nRemaining cards: " + str(remaining))
 
         return remaining
 
-    def getOccurencesPerCard(self, visibleCards):
+    def getOccurencesPerCard(self, cardSet):
         tempDict = {}
 
-        for c in visibleCards:
+        for c in cardSet:
+            suit = c.getSuitShort()
+               
             if c.value in tempDict:
                 tempDict[c.value] = tempDict[c.value] + 1 
             else:
                 tempDict[c.value] = 1
+
+            if suit in tempDict:
+                tempDict[suit] = tempDict[suit] + 1
+            else:
+                 tempDict[suit] = 1
 
         return tempDict
 
@@ -156,12 +171,6 @@ class PokerStatter():
 
         return cardsOut
 
-        # do this line per player
-        # only pass in cards for each player at a time
-        # do this by passing in a dict to this method, that contains 
-        # player 1 cards, players2 cards, and all table cards. Then use 
-        # that to pass player ones visible cards to the method to determind 
-        # his potention chance of getting what he needs
     def printVisibleCards(self, visibleCards):
         audienceCards = []
         for card in visibleCards:
@@ -172,6 +181,11 @@ class PokerStatter():
     def getFlushCards(self, visibleCards):  
         
        #[{"id":1,"suit": "H", "value": 2},{"id":2,"suit": "C", "value": 4}]
+
+        # I realised today that I coded what you coded for this method in a method called 
+        # getRemainingCards which I created while I was doing the one pair chance, so 
+        # we could use it for this exact purpose in the future. 
+        # But I forgot to show you so yeah.. 
 
         hearts_count = 0
         diamonds_count = 0
@@ -190,7 +204,7 @@ class PokerStatter():
             if card.suit == Suits.Clubs:
                 clubs_count +=1
         
-        if (hearts_count or diamonds_count or spades_count or clubs_count) >=3:
+        if (hearts_count or diamonds_count or spades_count or clubs_count) >=3:# this wont work
             print("The flush is possible")
             
         #suit with higest count to see which cards are needed to completet the flush

@@ -17,3 +17,16 @@ class Card():
 
     def toShortString(self):
         return f"{str(self.value)}{str(self.suit.name)[0]}"
+    
+    def getSuitShort(self):
+        if self.suit == Suits.Clubs:
+            return "C"
+        elif self.suit == Suits.Spades:
+            return "S"
+        elif self.suit == Suits.Hearts:
+            return "H"
+        elif self.suit == Suits.Diamonds:
+            return "D"
+        else:
+            return "default"
+
