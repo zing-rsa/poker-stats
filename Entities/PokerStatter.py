@@ -112,9 +112,10 @@ class PokerStatter():
 
                 if pCard.value == reqCard.value:
                     for c in self.getCardsLeftOfValue(reqCard.value):
+
                         possibleOnePairs.append({
                             "cards": [pCard, c],
-                            "chance": self.chanceOfGettingCard(remainingCardsCount, 1)
+                            "chance": self.chanceOfCard(player, c.suit, c.value)
                         })
 
         if len(onePairReqirements) == 0:
@@ -126,6 +127,35 @@ class PokerStatter():
 
         return  totalChance
         
+    def chanceOfCard(self, player, suit = None, value = None):
+
+        cardCount = 0
+        remainingCardsCount = float(52 - len(self.audienceCards))
+
+        otherPlayerCards = []
+
+        for key in self.allCardsDict:
+            if key != "TableCards" and key != "leftOverCards" and key != player.Id:
+                otherPlayerCards += self.allCardsDict[key]
+        
+        if suit != None and value != None:
+            for c in self.allCardsDict[player.Id]:
+                if c.value == value and c.suit == suit:
+                    return 1
+            for c in self.allCardsDict["TableCards"]:
+                if c.value == value and c.suit == suit:
+                    return 1
+            for c in otherPlayerCards:
+                if c.value == value and c.suit == suit:
+                    return 0
+            return 1/remainingCardsCount
+        elif suit == None and value != None:
+            return self.remainCardsDict[value]/remainingCardsCount
+        elif suit != None and value == None:
+            return  self.remainCardsDict[suit.name[0]]/remainingCardsCount
+        else:
+            return "u knob"
+
 
     def getCardsLeftOfValue(self, value):
 
