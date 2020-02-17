@@ -73,6 +73,7 @@ class Table():
 
         cardsDict = {}
         tableCards = []
+        cardsDict["leftOverCards"] = []
 
         for p in self.players:
             cardsDict[p.Id] = p.cards
@@ -80,9 +81,11 @@ class Table():
         for c in self.tableCards:
             if c.visible:
                 tableCards.append(c)
+            else:
+                cardsDict["leftOverCards"].append(c)
         cardsDict["TableCards"] = tableCards
 
-        cardsDict["leftOverCards"] = self.getLeftOverCards()
+        cardsDict["leftOverCards"] += self.getLeftOverCards()
 
         return cardsDict
 
