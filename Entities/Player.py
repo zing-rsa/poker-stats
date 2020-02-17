@@ -4,7 +4,7 @@ class Player():
 
     Id = -1
     cards = []
-    currentHighHand = handEnum.default
+    currentHighestHand = handEnum.default
     handChances = {}
     handsToCheck = []
 

@@ -14,10 +14,13 @@ class PokerStatter():
     def getHighestCurrentHand(self):
         return handEnum.default
 
-    def beatsHand(self,hands):
+    def beatsHand(self,hand1,hand2):
         
         
 
+        pass
+
+    def beatsHands(self,hand1,hands):
         pass
     
     def genChancePerPlayer(self, allCardsDict, players):
@@ -95,12 +98,24 @@ class PokerStatter():
         return chancesPerHand
     
     def chanceOfOnePair(self, player):
-                              
+
+        possibleOnePairs = []
+             
         totalChance = 0 
 
         remainingCardsCount = float(52 - len(self.audienceCards))
 
-        onePairReqirements = self.getOnePairCards(self.allCardsDict["TableCards"] + self.allCardsDict[player.Id])
+        onePairReqirements = self.getOnePairCards(self.allCardsDict[player.Id] + self.allCardsDict["TableCards"])
+        
+        for pCard in player.cards:
+            for reqCard in onePairReqirements:
+
+                if pCard.value == reqCard.value:
+                    for c in self.getCardsLeftOfValue(reqCard.value):
+                        possibleOnePairs.append({
+                            "cards": [pCard, c],
+                            "chance": self.chanceOfGettingCard(remainingCardsCount, 1)
+                        })
 
         if len(onePairReqirements) == 0:
             # player has hit one pair
@@ -111,6 +126,36 @@ class PokerStatter():
 
         return  totalChance
         
+
+    def getCardsLeftOfValue(self, value):
+
+        cards = []
+
+        for card in self.allCardsDict["leftOverCards"]:
+            if card.value == value:
+                cards.append(card)
+
+        return cards
+
+
+
+    def getOnePairCards(self,visibleCards):
+
+        cardsOut = []
+        
+        for c in visibleCards:
+            for v in visibleCards:
+                if (c.value == v.value) and (c.suit == v.suit):
+                    #skip if the same card
+                    continue
+                elif c.value == v.value:
+                    #Found 1 pair - return 0 required cards
+                    return []
+                    
+            cardsOut.append(Card(-1, c.value, Suits.Undefined))
+            
+        return cardsOut
+
     def retrieveRemainingCards(self, cardSet):
 
         occurencesPerCard = self.getOccurencesPerCard(cardSet)
@@ -153,23 +198,6 @@ class PokerStatter():
 
     def chanceOfGettingCard(self, cardCount, cardsLeft):
         return float(cardsLeft/cardCount)
-
-    def getOnePairCards(self,visibleCards):
-
-        cardsOut = []
-        
-        for c in visibleCards:
-            for v in visibleCards:
-                if (c.value == v.value) and (c.suit == v.suit):
-                    #skip if the same card
-                    continue
-                elif c.value == v.value:
-                    #Found 1 pair - return 0 required cards
-                    return []
-                    
-            cardsOut.append(Card(-1, c.value, Suits.Undefined))
-
-        return cardsOut
 
     def printVisibleCards(self, visibleCards):
         audienceCards = []
