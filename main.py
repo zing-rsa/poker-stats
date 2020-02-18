@@ -6,7 +6,7 @@ from Entities.Printer import Printer
 
 t = Table(2)
 
-testPlayerCards = [[0,13],[14,4]]
+testPlayerCards = [[0,12],[14,4]]
 testTableCards = [6,7,8,9,10]
 
 t.seed(testPlayerCards,testTableCards)
@@ -84,3 +84,32 @@ p.genChancePerPlayer(t.getAllCardsDict(), t.players)
 
 
 # 4.5/102.3
+
+
+# P1
+# AH 3D
+# AD AS AC 3H 3C 3S
+
+
+# [AH,AD]
+# 2.0000228283%
+
+# [AH,AS]
+# 2.0000228283%
+
+
+
+
+
+
+# P2 
+# 4 6
+
+# TableCards
+# none
+# flop
+# turn
+# river
+
+
+

@@ -6,7 +6,6 @@ from Entities.Hand import handEnum
 class PokerStatter():
     
     visibleCards = []
-
     allCardsDict = {}
     remainCardsDict = {}
     audienceCards = []
@@ -32,11 +31,10 @@ class PokerStatter():
             if key == "leftOverCards":
                 continue
             audienceCards = audienceCards + allCardsDict[key]
-
-        remainCardsDict = self.retrieveRemainingCards(audienceCards)
         
         self.allCardsDict = allCardsDict
-        self.remainCardsDict = remainCardsDict
+        self.remainCardsDict = self.retrieveRemainingCards(audienceCards)
+        self.occurencesPerCard = self.getOccurencesPerCard(audienceCards) 
         self.audienceCards = audienceCards
 
         currentHighestHand = handEnum.default
@@ -100,6 +98,11 @@ class PokerStatter():
     def chanceOfOnePair(self, player):
 
         possibleOnePairs = []
+
+        allCards = []
+
+        for key in self.allCardsDict:
+            allCards += self.allCardsDict[key]
              
         totalChance = 0 
 
@@ -109,9 +112,10 @@ class PokerStatter():
         
         for pCard in player.cards:
             for reqCard in onePairReqirements:
-
+                
                 if pCard.value == reqCard.value:
-                    for c in self.getCardsLeftOfValue(reqCard.value):
+                    # for c in self.getCardsLeftOfValue(reqCard.value):
+                    for c in allCards:
 
                         possibleOnePairs.append({
                             "cards": [pCard, c],
@@ -178,9 +182,9 @@ class PokerStatter():
                 if (c.value == v.value) and (c.suit == v.suit):
                     #skip if the same card
                     continue
-                elif c.value == v.value:
-                    #Found 1 pair - return 0 required cards
-                    return []
+                # elif c.value == v.value:
+                #     #Found 1 pair - return 0 required cards
+                #     return []
                     
             cardsOut.append(Card(-1, c.value, Suits.Undefined))
             
@@ -236,50 +240,51 @@ class PokerStatter():
                 audienceCards.append(item)
         return audienceCards
 
-    def getFlushCards(self, visibleCards):  
-        
-       #[{"id":1,"suit": "H", "value": 2},{"id":2,"suit": "C", "value": 4}]
 
-        # I realised today that I coded what you coded for this method in a method called 
-        # getRemainingCards which I created while I was doing the one pair chance, so 
-        # we could use it for this exact purpose in the future. 
-        # But I forgot to show you so yeah.. 
+     
 
-        hearts_count = 0
-        diamonds_count = 0
-        spades_count = 0
-        clubs_count = 0
+
+    #visibleCards = [] player can see
+    #allCardsDict = {}
+    #remainCardsDict = {}
+    #audienceCards = [] all cards on table
         
-        suitforflush = ""
+    def getFlushCards(self, player): 
+        #expects a player object
+
+        # returns list of dicitonaries in the form:
+        # "cards": [card,card,card,card,card],
+        # "chance": 1.55555%
+        #self.allCardsDict["TableCards"]
+        #self.allCardsDict[player.Id]
         
-        for card in visibleCards:
-            if card.suit == Suits.Hearts:
-                hearts_count +=1
-            if card.suit == Suits.Diamonds:
-                diamonds_count +=1
-            if card.suit == Suits.Spades:
-                spades_count +=1
-            if card.suit == Suits.Clubs:
-                clubs_count +=1
         
-        if (hearts_count or diamonds_count or spades_count or clubs_count) >=3:# this wont work
-            print("The flush is possible")
+
+        
+        #1 possible flush, returns dict {"cards": [2H, 3H, 6H, ...]
+        #                                "chance: [1,55%, 6,77%, ...]
+        #                                "totalChance: sum of chance""}
+        tempDict = {"cards": [],
+                    "chance": 0}
+        maximum = max(self.occurencesPerCard["C"], self.occurencesPerCard["S"], 
+                        self.occurencesPerCard["D"], self.occurencesPerCard["H"])
+
+        print(maximum)
+        if maximum < 3:
+            print("Flush is not possible")
             
-        #suit with higest count to see which cards are needed to completet the flush
-        highest = max(hearts_count, diamonds_count, spades_count, clubs_count)
-        if hearts_count == highest:
-            suitforflush = "hearts"    
+        else:
+            for key in self.occurencesPerCard:
+                
+                if (key == "D" or key == "H" or key == "S" or key == "C") and self.occurencesPerCard[key] == maximum:
+                    print(f'The {key} flush is possible')                
         
-        if diamonds_count == highest:
-            suitforflush = "diamonds"    
+        #i now know what suit the flush is possible for
+        #need to return the left over cards from that flush
         
-        if spades_count == highest:
-            suitforflush = "spades"    
         
-        if clubs_count == highest:
-            suitforflush = "clubs"
+
         
-        self.allCardsDict["leftOverCards"]
 
             
         
