@@ -15,8 +15,6 @@ class PokerStatter():
 
     def beatsHand(self,hand1,hand2):
         
-        
-
         pass
 
     def beatsHands(self,hand1,hands):
@@ -65,18 +63,24 @@ class PokerStatter():
 
     def getPossibleHands(self, player):
 
-        possibleHands = {}
+        possibleHands = []
 
         player.handChances = self.getHandChances(player)
 
-        for h, c in player.handChances.items():
+        for h, handChanceList in player.handChances.items():
             #Possible outcomes
             # 1 - player hit hand - need to check his currentHighestHand
             # % - some percent chance of player getting that card
             # 0 - player cannot hit 
 
-            if c != 0:
-                possibleHands[h] = c
+            for handChance in handChanceList:
+                if handChance.chance != 0:
+                    possibleHands.append({
+                        "hand": h,
+                        "cards": handChance.cards,
+                        "chance": handChance.chance
+                    })
+
 
         return possibleHands
 
@@ -87,7 +91,7 @@ class PokerStatter():
             #handEnum[3] : self.chanceOfTwoPair
             #handEnum[4] : self.chanceOfTrips
             #handEnum[5] : self.chanceOfStraight
-            #handEnum[6] : self.chanceOfFlush
+            #"Flush" : self.chanceOfFlush()
             #handEnum[7] : self.chanceOfFullHouse
             #handEnum[8] : self.chanceOfQuads
             #handEnum[9] : self.chanceOfStraightFlush
@@ -103,36 +107,19 @@ class PokerStatter():
 
         for key in self.allCardsDict:
             allCards += self.allCardsDict[key]
-             
-        totalChance = 0 
-
-        remainingCardsCount = float(52 - len(self.audienceCards))
-
-        onePairReqirements = self.getOnePairCards(self.allCardsDict[player.Id] + self.allCardsDict["TableCards"])
         
         for pCard in player.cards:
-            for reqCard in onePairReqirements:
-                
-                if pCard.value == reqCard.value:
-                    # for c in self.getCardsLeftOfValue(reqCard.value):
-                    for c in allCards:
-
-                        possibleOnePairs.append({
+            for c in allCards:
+                if pCard.value == c.value and pCard.suit != c.suit:
+                    possibleOnePairs.append({
                             "cards": [pCard, c],
                             "chance": self.chanceOfCard(player, c.suit, c.value)
                         })
 
-        if len(onePairReqirements) == 0:
-            # player has hit one pair
-            return 1
+        return possibleOnePairs
 
-        for c in onePairReqirements:
-            totalChance += self.chanceOfGettingCard(remainingCardsCount, self.remainCardsDict[c.value])
-
-        return  totalChance
-        
     def chanceOfCard(self, player, suit = None, value = None):
-
+        
         cardCount = 0
         remainingCardsCount = float(52 - len(self.audienceCards))
 
@@ -170,7 +157,6 @@ class PokerStatter():
                 cards.append(card)
 
         return cards
-
 
 
     def getOnePairCards(self,visibleCards):
@@ -213,7 +199,12 @@ class PokerStatter():
         return remaining
 
     def getOccurencesPerCard(self, cardSet):
-        tempDict = {}
+        tempDict = {
+            "C": 0,
+            "D": 0,
+            "S": 0,
+            "H": 0
+        }
 
         for c in cardSet:
             suit = c.getSuitShort()
@@ -239,52 +230,3 @@ class PokerStatter():
             for item in card:
                 audienceCards.append(item)
         return audienceCards
-
-
-     
-
-
-    #visibleCards = [] player can see
-    #allCardsDict = {}
-    #remainCardsDict = {}
-    #audienceCards = [] all cards on table
-        
-    def getFlushCards(self, player): 
-        #expects a player object
-
-        # returns list of dicitonaries in the form:
-        # "cards": [card,card,card,card,card],
-        # "chance": 1.55555%
-        #self.allCardsDict["TableCards"]
-        #self.allCardsDict[player.Id]
-        
-        
-
-        
-        #1 possible flush, returns dict {"cards": [2H, 3H, 6H, ...]
-        #                                "chance: [1,55%, 6,77%, ...]
-        #                                "totalChance: sum of chance""}
-        tempDict = {"cards": [],
-                    "chance": 0}
-        maximum = max(self.occurencesPerCard["C"], self.occurencesPerCard["S"], 
-                        self.occurencesPerCard["D"], self.occurencesPerCard["H"])
-
-        print(maximum)
-        if maximum < 3:
-            print("Flush is not possible")
-            
-        else:
-            for key in self.occurencesPerCard:
-                
-                if (key == "D" or key == "H" or key == "S" or key == "C") and self.occurencesPerCard[key] == maximum:
-                    print(f'The {key} flush is possible')                
-        
-        #i now know what suit the flush is possible for
-        #need to return the left over cards from that flush
-        
-        
-
-        
-
-            
-        
