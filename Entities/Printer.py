@@ -5,11 +5,15 @@ class Printer():
             print(c.toString())
 
     def printTableCards(self, tableCards):
-        for c in tableCards:
-            if c.visible:
-                print(c.toString())
+        for s in tableCards:
+            if s.visible:
+                print(s.card.toString())
             else:
                 print("...")
+
+    def printTableCardsExposed(self, tableCards):
+        for s in tableCards:
+            print(s.card.toString())
 
     def printPlayers(self, players):
         for p in range(len(players)):

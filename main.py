@@ -5,55 +5,32 @@ from Entities.PokerStatter import PokerStatter
 from Entities.Printer import Printer
 
 t = Table(2)
+
+testPlayerCards = [[0,13],[14,4]]
+testTableCards = [6,7,8,9,10]
+
+t.seed(testPlayerCards,testTableCards)
+
 pr = Printer()
 
-t.startNewHand()
+print("\nPlayers:", end="\n\n")
 
 pr.printPlayers(t.players)
 
+print("\nNot Exposed Table:", end="\n\n")
+
+pr.printTableCards(t.tableCards)
+
 print("\nExposed Table:", end="\n\n")
+
+pr.printTableCardsExposed(t.tableCards)
+
+
+
 
 p = PokerStatter()
 
 p.genChancePerPlayer(t.getAllCardsDict(), t.players)
-
-
-
-        # {
-
-        #     "p1": [{"h","1"}, {"c","4"}],
-        #     "p2": [{"h","1"}, {"c","4"}],
-        #     "table": [{"h","1"}, {"c","4"},{"h","1"}, {"c","4"},{"h","1"}]
-        #     "leftout" 
-        # }
-
-
-
-
-
-
-
-
-
-
-
-# P1
-
-# one pair = 15%
-# two pair = 10%
-# trips 10%
-# straight 3%
-
-# 26
-
-# P2
-
-# one pair 15%
-# two pair 10%
-# straight 5%
-
-# 30%
-
 
 
 

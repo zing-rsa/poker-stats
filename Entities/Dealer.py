@@ -1,7 +1,6 @@
 
 from Entities.Suits import Suits
 from Entities.Card import Card
-from Entities.TableCard import TableCard 
 import math
 import random
 
@@ -48,9 +47,9 @@ class Dealer():
         cardsOut = []
 
         for i in range(5):
-            tempCard = self.produceRandomCard()
-            tempTableCard = TableCard(tempCard.Id, tempCard.value, tempCard.suit, False)
-            cardsOut.append(tempTableCard)
+            randCard = self.produceRandomCard()
+            tempCard = Card(randCard.Id, randCard.value, randCard.suit)
+            cardsOut.append(tempCard)
 
         return cardsOut
 
@@ -64,17 +63,17 @@ class Dealer():
         return leftoverCards
 
 
-    def flipCard(self, tableCards):
+    def flipCard(self, tableSlots):
 
-        if not tableCards[2].visible:
+        if not tableSlots[2].visible:
             for i in range(3):
-                tableCards[i].visible = True
-        elif not tableCards[3].visible:
-            tableCards[3].visible = True
+                tableSlots[i].visible = True
+        elif not tableSlots[3].visible:
+            tableSlots[3].visible = True
         else: 
-            tableCards[4].visible = True
+            tableSlots[4].visible = True
 
-        return tableCards
+        return tableSlots
 
     def getCard(self, id):
         for card in self.deck:
