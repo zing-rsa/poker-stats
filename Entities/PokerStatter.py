@@ -3,49 +3,179 @@ from Entities.Card import Card
 from Entities.Player import Player
 from Entities.HandEnum import handEnum
 from Entities.Hand import Hand
+import pprint
 
 class PokerStatter():
+
+    #region Properties 
     
     visibleCards = []
     allCardsDict = {}
     remainCardsDict = {}
     audienceCards = []
     currentHighestHand = Hand("default")
+    currentHighestHandHolder = -1
 
+    #endregion
+    
+
+    #   Return the chance of each player winning the current hand
+    #   Expects:    allCardsDict - dictionary with seperate keys for the contained list of Card Objects
+    #               players - list of player objects
+    #   Returns:    Dictionary of player Id's and their percent chance of winning
+    def genChancePerPlayer(self, allCardsDict, players):
+
+        chancesPerPlayer = {}
+        audienceCards = []
+        totalChance = 0
+        playerChance = 0
+
+        for key in allCardsDict:
+            if key == "leftOverCards":
+                continue
+            audienceCards = audienceCards + allCardsDict[key]
+        
+        self.allCardsDict = allCardsDict
+        self.remainCardsDict = self.retrieveRemainingCards(audienceCards)
+        self.occurencesPerCard = self.getOccurencesPerCard(audienceCards)
+        self.audienceCards = audienceCards
+
+        self.getPossibleWinningHands(players)
+
+        for p in players:
+
+            if p.Id != self.currentHighestHandHolder:
+
+                for h in p.possibleWinningHands:
+                    playerChance += h.chance
+                    totalChance += h.chance
+
+                chancesPerPlayer[p.Id] = playerChance * 100
+        
+        chancesPerPlayer[self.currentHighestHandHolder] = 100 - (totalChance * 100)
+                
+        return chancesPerPlayer
+
+    #region Generic hand management 
+
+
+    #   Populates each player object with a filtered list of winning Hand Objects
+    #   Expects:    players - list of player Objects
+    #   Returns:    null(assigns by reference to player)
+    def getPossibleWinningHands(self, players):
+
+        for p in players:
+            p.possibleHands = self.getAllPossibleHands(p)
+
+        self.currentHighestHand = self.getHighestCurrentHand(players)
+
+        for p in players: 
+
+            handsToCheck = []
+
+            for key in p.possibleHands:
+
+                if handEnum[key].value >= handEnum[self.currentHighestHand.name].value:
+
+                    for hand in p.possibleHands[key]: #all hands(possible or not) better than the currentHighestHand
+                        if hand.chance != 0 and self.compareHands(hand, self.currentHighestHand) == 1:
+                            handsToCheck.append(hand)
+            
+            p.possibleWinningHands = handsToCheck
+
+
+    #   Generates a dictionary of hands
+    #   Expects:    player - the player object to use
+    #   Returns:    dictionary with hand names as keys, 
+    #               and lists of Hand Objects as values
+    def getAllPossibleHands(self, player):
+
+        chancesPerHand = {
+            "onePair"   : self.getPossibleOnePairs(player)
+        #   "twoPair"   : self.chanceOfTwoPair
+        #   "trips"     : self.chanceOfTrips
+        #   "straight"  : self.chanceOfStraight
+        #   "flush"     : self.chanceOfFlush()
+        #   "fullhouse" : self.chanceOfFullHouse
+        #   "quads"     : self.chanceOfQuads
+        #   "straightFlush" : self.chanceOfStraightFlush
+        }
+
+        return chancesPerHand
+
+    #endregion
+    
+    #region Specific chance of hand calculation methods 
+
+    def getPossibleOnePairs(self, player):
+
+        possibleOnePairs = []
+
+        allCards = []
+
+        for key in self.allCardsDict:
+            allCards += self.allCardsDict[key]
+        
+        visibleCards = player.cards + self.allCardsDict["TableCards"]
+        
+        for pCard in visibleCards :
+            for c in allCards:
+                if pCard.value == c.value and pCard.suit != c.suit:
+                    possibleOnePairs.append(
+                        Hand(
+                            name    = "onePair",
+                            cards   = [pCard,c],
+                            chance  = self.chanceOfCard(player, c.suit, c.value)
+                        ))
+                        
+        return possibleOnePairs
+    
+    def getPossibleTwoPairs(self,player):
+        pass
+
+    #endregion
+
+    #region Comparisons and Highs 
+
+    #   Return the highest hand out of all of the players
+    #   Expects: players - list of player objects
+    #   Returns: A Hand object containing the cards and name of the highest current hand
     def getHighestCurrentHand(self, players):
 
         highestHand = Hand("default")
 
         for p in players:
-            for key in p.handChances:
-                for h in p.handChances[key]:
+            for key in p.possibleHands:
+                for h in p.possibleHands[key]:
                     if h.chance == 1:
 
                         testHand = Hand(h.name, h.cards)
 
-                        if self.beatsHand(testHand, highestHand) == 1:
+                        if self.compareHands(testHand, highestHand) == 1:
                             highestHand = testHand
+                            self.currentHighestHandHolder = p.Id
         
         return highestHand
 
-    def highest(self, value1, value2):
-        if value1 > value2:
-            return 1
-        elif value1 < value2:
-            return 2
-        else:
-            return 0
 
-    def beatsHand(self,hand1,hand2):
+    #   Determines which hand from 2 given hands will win
+    #   Expects: hand1 - first compare Hand Object 
+    #            hand2 - second compare Hand Object
+    #   Returns: Numeric representation of which hand won (1 or 2, or 0 if draw)
+    def compareHands(self,hand1,hand2):
 
         if handEnum[hand1.name].value > handEnum[hand2.name].value:
-            # hand1 is a stronger combo
             return 1
         elif handEnum[hand1.name].value < handEnum[hand2.name].value:
-            # hand2 is a stronger combo
             return 2
         else:
             # same combo, find higher kicker(s)
+
+            # possible here to just find the highest card in the cards lists? 
+            # ie. one pair, if the highest card from p1.cards + p2.cards gives you the winner
+            # two pair? 
+            # trips?
+            # straight?
             
             if hand1.name == "onePair":
 
@@ -66,109 +196,28 @@ class PokerStatter():
             elif hand1.name == "straightflush":
                 pass
 
+    def highest(self, value1, value2):
+        if value1 > value2:
+            return 1
+        elif value1 < value2:
+            return 2
+        else:
+            return 0
 
     def beatsHands(self,hand1,hands):
         pass
-    
-    def genChancePerPlayer(self, allCardsDict, players):
 
-        chancesPerPlayer = {}
-        audienceCards = []
+    #endregion
 
-        for key in allCardsDict:
-            if key == "leftOverCards":
-                continue
-            audienceCards = audienceCards + allCardsDict[key]
-        
-        self.allCardsDict = allCardsDict
-        self.remainCardsDict = self.retrieveRemainingCards(audienceCards)
-        self.occurencesPerCard = self.getOccurencesPerCard(audienceCards) 
-        self.audienceCards = audienceCards
+    #region Card utilities 
 
-        self.getHandsToCheck(players) # this will need to be filtered by what is above the currentHighestHand
-
-        return chancesPerPlayer
-
-    def getHandsToCheck(self, players):
-        # returns list of players with hands that could win 
-
-        for p in players:
-            p.handChances = self.getHandChances(p)
-
-        self.currentHighestHand = self.getHighestCurrentHand(players)
-        
-
-        for p in players: 
-
-            handsToCheck = []
-
-            for key in p.handChances:
-
-                if handEnum[key].value >= handEnum[self.currentHighestHand.name].value:
-
-                    for hand in p.handChances[key]: #all hands(possible or not) better than the currentHighestHand
-                        if hand.chance != 0 and self.beatsHand(hand, self.currentHighestHand) == 1:
-                            handsToCheck.append(hand)
-            
-            p.handsToCheck = handsToCheck
-
-    # def getPossibleHands(self, player):
-
-    #     possibleHands = []
-
-        
-
-    #     for h, handChanceList in player.handChances.items():
-    #         #Possible outcomes
-    #         # 1 - player hit hand - need to check his currentHighestHand
-    #         # % - some percent chance of player getting that card
-    #         # 0 - player cannot hit 
-
-    #         for handChance in handChanceList:
-    #             if handChance.chance != 0:
-    #                 possibleHands.append({
-    #                     "hand": h,
-    #                     "cards": handChance.cards,
-    #                     "chance": handChance.chance
-    #                 })
-
-
-    #    return possibleHands
-
-    def getHandChances(self, player):
-
-        chancesPerHand = {
-            "onePair" : self.chanceOfOnePair(player)
-            #handEnum[3] : self.chanceOfTwoPair
-            #handEnum[4] : self.chanceOfTrips
-            #handEnum[5] : self.chanceOfStraight
-            #"Flush" : self.chanceOfFlush()
-            #handEnum[7] : self.chanceOfFullHouse
-            #handEnum[8] : self.chanceOfQuads
-            #handEnum[9] : self.chanceOfStraightFlush
-        }
-
-        return chancesPerHand
-    
-    def chanceOfOnePair(self, player):
-
-        possibleOnePairs = []
-
-        allCards = []
-
-        for key in self.allCardsDict:
-            allCards += self.allCardsDict[key]
-        
-        for pCard in player.cards:
-            for c in allCards:
-                if pCard.value == c.value and pCard.suit != c.suit:
-                    possibleOnePairs.append(Hand("onePair",[pCard,c],self.chanceOfCard(player, c.suit, c.value)))
-                        
-        return possibleOnePairs
-
+    #   Retrieve the percent chance of getting a card with matching parameters
+    #   Expects:    player  - the current player object being worked on 
+    #               suit    - optional suit enum to match on
+    #               value   - optional numeric card value to match on
+    #   Returns:    the percent chance of getting a card that matches the supplied criteria
     def chanceOfCard(self, player, suit = None, value = None):
         
-        cardCount = 0
         remainingCardsCount = float(52 - len(self.audienceCards))
 
         otherPlayerCards = []
@@ -195,35 +244,11 @@ class PokerStatter():
         else:
             return "u knob"
 
-
-    def getCardsLeftOfValue(self, value):
-
-        cards = []
-
-        for card in self.allCardsDict["leftOverCards"]:
-            if card.value == value:
-                cards.append(card)
-
-        return cards
-
-
-    def getOnePairCards(self,visibleCards):
-
-        cardsOut = []
-        
-        for c in visibleCards:
-            for v in visibleCards:
-                if (c.value == v.value) and (c.suit == v.suit):
-                    #skip if the same card
-                    continue
-                # elif c.value == v.value:
-                #     #Found 1 pair - return 0 required cards
-                #     return []
-                    
-            cardsOut.append(Card(-1, c.value, Suits.Undefined))
-            
-        return cardsOut
-
+    
+    #   Remove the given cardSet from a set of cards and return counts of the rest of the cards
+    #   Expects: cardSet - list of Card Objects to exclude
+    #   Returns: dictionary where each card value and suit is a key, and values are the amount
+    #            of the specific key are left in the deck
     def retrieveRemainingCards(self, cardSet):
 
         occurencesPerCard = self.getOccurencesPerCard(cardSet)
@@ -242,10 +267,13 @@ class PokerStatter():
             else:
                 remaining[s] = 13
 
-        print("\nRemaining cards: " + str(remaining))
-
         return remaining
 
+
+    #   Create totals for how many of each card value and suit exist inside a given cardSet
+    #   Expects:    cardSet - list of Card objects to tally up
+    #   Returns:    dictionary where each card value and suit is a key, and values are the amount
+    #               of the specific key exist in the card set
     def getOccurencesPerCard(self, cardSet):
         tempDict = {
             "C": 0,
@@ -269,12 +297,4 @@ class PokerStatter():
 
         return tempDict
 
-    def chanceOfGettingCard(self, cardCount, cardsLeft):
-        return float(cardsLeft/cardCount)
-
-    def printVisibleCards(self, visibleCards):
-        audienceCards = []
-        for card in visibleCards:
-            for item in card:
-                audienceCards.append(item)
-        return audienceCards
+    #endregion

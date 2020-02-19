@@ -5,8 +5,8 @@ class Player():
     Id = -1
     cards = []
     currentHighestHand = handEnum.default
-    handChances = {}
-    handsToCheck = []
+    possibleHands = {}
+    possibleWinningHands = []
 
     def __init__(self, _Id, _cards):
         self.Id = _Id
