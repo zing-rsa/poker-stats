@@ -1,7 +1,8 @@
 from Entities.Suits import Suits
 from Entities.Card import Card
 from Entities.Player import Player
-from Entities.Hand import handEnum
+from Entities.HandEnum import handEnum
+from Entities.Hand import Hand
 
 class PokerStatter():
     
@@ -9,13 +10,62 @@ class PokerStatter():
     allCardsDict = {}
     remainCardsDict = {}
     audienceCards = []
+    currentHighestHand = Hand("default")
 
-    def getHighestCurrentHand(self):
-        return handEnum.default
+    def getHighestCurrentHand(self, players):
+
+        highestHand = Hand("default")
+
+        for p in players:
+            for key in p.handChances:
+                for h in p.handChances[key]:
+                    if h.chance == 1:
+
+                        testHand = Hand(h.name, h.cards)
+
+                        if self.beatsHand(testHand, highestHand) == 1:
+                            highestHand = testHand
+        
+        return highestHand
+
+    def highest(self, value1, value2):
+        if value1 > value2:
+            return 1
+        elif value1 < value2:
+            return 2
+        else:
+            return 0
 
     def beatsHand(self,hand1,hand2):
-        
-        pass
+
+        if handEnum[hand1.name].value > handEnum[hand2.name].value:
+            # hand1 is a stronger combo
+            return 1
+        elif handEnum[hand1.name].value < handEnum[hand2.name].value:
+            # hand2 is a stronger combo
+            return 2
+        else:
+            # same combo, find higher kicker(s)
+            
+            if hand1.name == "onePair":
+
+                return self.highest(hand1.cards[0].value, hand2.cards[0].value)
+
+            elif hand1.name == "twoPair":
+                pass
+            elif hand1.name == "trips":
+                pass
+            elif hand1.name == "straight":
+                pass
+            elif hand1.name == "flush":
+                pass
+            elif hand1.name == "fullHouse":
+                pass
+            elif hand1.name == "quads":
+                pass
+            elif hand1.name == "straightflush":
+                pass
+
 
     def beatsHands(self,hand1,hands):
         pass
@@ -35,54 +85,55 @@ class PokerStatter():
         self.occurencesPerCard = self.getOccurencesPerCard(audienceCards) 
         self.audienceCards = audienceCards
 
-        currentHighestHand = handEnum.default
-
-        for p in players:
-            if p.currentHighestHand.value > currentHighestHand.value:
-                currentHighestHand = p.currentHighestHand
-            
-
-        for p in players:
-            p.handsToCheck = self.getHandsToCheck(p, currentHighestHand) # this will need to be filtered by what is above the currentHighestHand
-            
+        self.getHandsToCheck(players) # this will need to be filtered by what is above the currentHighestHand
 
         return chancesPerPlayer
 
-    def getHandsToCheck(self, player, currentHighestHand):
-        possibleHands = self.getPossibleHands(player)
+    def getHandsToCheck(self, players):
+        # returns list of players with hands that could win 
 
-        handsToCheck = {}
+        for p in players:
+            p.handChances = self.getHandChances(p)
 
-        for h, c in possibleHands:
-            if handEnum[h] > handEnum[currentHighestHand]:
-                pass
-                
-        return "test"
+        self.currentHighestHand = self.getHighestCurrentHand(players)
+        
+
+        for p in players: 
+
+            handsToCheck = []
+
+            for key in p.handChances:
+
+                if handEnum[key].value >= handEnum[self.currentHighestHand.name].value:
+
+                    for hand in p.handChances[key]: #all hands(possible or not) better than the currentHighestHand
+                        if hand.chance != 0 and self.beatsHand(hand, self.currentHighestHand) == 1:
+                            handsToCheck.append(hand)
+            
+            p.handsToCheck = handsToCheck
+
+    # def getPossibleHands(self, player):
+
+    #     possibleHands = []
+
+        
+
+    #     for h, handChanceList in player.handChances.items():
+    #         #Possible outcomes
+    #         # 1 - player hit hand - need to check his currentHighestHand
+    #         # % - some percent chance of player getting that card
+    #         # 0 - player cannot hit 
+
+    #         for handChance in handChanceList:
+    #             if handChance.chance != 0:
+    #                 possibleHands.append({
+    #                     "hand": h,
+    #                     "cards": handChance.cards,
+    #                     "chance": handChance.chance
+    #                 })
 
 
-
-    def getPossibleHands(self, player):
-
-        possibleHands = []
-
-        player.handChances = self.getHandChances(player)
-
-        for h, handChanceList in player.handChances.items():
-            #Possible outcomes
-            # 1 - player hit hand - need to check his currentHighestHand
-            # % - some percent chance of player getting that card
-            # 0 - player cannot hit 
-
-            for handChance in handChanceList:
-                if handChance.chance != 0:
-                    possibleHands.append({
-                        "hand": h,
-                        "cards": handChance.cards,
-                        "chance": handChance.chance
-                    })
-
-
-        return possibleHands
+    #    return possibleHands
 
     def getHandChances(self, player):
 
@@ -111,11 +162,8 @@ class PokerStatter():
         for pCard in player.cards:
             for c in allCards:
                 if pCard.value == c.value and pCard.suit != c.suit:
-                    possibleOnePairs.append({
-                            "cards": [pCard, c],
-                            "chance": self.chanceOfCard(player, c.suit, c.value)
-                        })
-
+                    possibleOnePairs.append(Hand("onePair",[pCard,c],self.chanceOfCard(player, c.suit, c.value)))
+                        
         return possibleOnePairs
 
     def chanceOfCard(self, player, suit = None, value = None):
