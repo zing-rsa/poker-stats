@@ -13,8 +13,12 @@ class PokerStatter():
     allCardsDict = {}
     remainCardsDict = {}
     audienceCards = []
+
+    tableCardsLeft = 5
+
     currentHighestHand = Hand("default")
     currentHighestHandHolder = -1
+
 
     #endregion
     
@@ -39,6 +43,7 @@ class PokerStatter():
         self.remainCardsDict = self.retrieveRemainingCards(audienceCards)
         self.occurencesPerCard = self.getOccurencesPerCard(audienceCards)
         self.audienceCards = audienceCards
+        self.tableCardsLeft = 5 - len(allCardsDict["TableCards"])
 
         self.getPossibleWinningHands(players)
 
@@ -51,6 +56,7 @@ class PokerStatter():
                     totalChance += h.chance
 
                 chancesPerPlayer[p.Id] = playerChance * 100
+                # change this to look at ratio of players hand chance to the rest of the ratios
         
         chancesPerPlayer[self.currentHighestHandHolder] = 100 - (totalChance * 100)
                 
@@ -91,14 +97,15 @@ class PokerStatter():
     def getAllPossibleHands(self, player):
 
         chancesPerHand = {
-            "onePair"   : self.getPossibleOnePairs(player)
-        #   "twoPair"   : self.chanceOfTwoPair
-        #   "trips"     : self.chanceOfTrips
-        #   "straight"  : self.chanceOfStraight
-        #   "flush"     : self.chanceOfFlush()
-        #   "fullhouse" : self.chanceOfFullHouse
-        #   "quads"     : self.chanceOfQuads
-        #   "straightFlush" : self.chanceOfStraightFlush
+            "highCard"  : self.getPossibleKickers(player), 
+            "onePair"   : self.getPossibleOnePairs(player),
+        #    "twoPair"   : self.getPossibleTwoPairs(player)
+        #    "trips"     : self.getPossibleTrips(player)
+        #    "straight"  : self.getPossibleStraights(player)
+        #    "flush"     : self.getPossibleFlushes(player)
+        #    "fullhouse" : self.getPossibleFullHouses(player)
+        #    "quads"     : self.getPossibleQuads(player)
+        #    "straightFlush" : self.getPossibleStraightFlushes(player)
         }
 
         return chancesPerHand
@@ -106,6 +113,26 @@ class PokerStatter():
     #endregion
     
     #region Specific chance of hand calculation methods 
+
+    #   All methods:
+    #   Expect:    player: current player object
+    #   Return:    a list of Hand objects
+
+    def getPossibleKickers(self,player):
+
+        possibleKickers = []
+
+        visibleCards = player.cards + self.allCardsDict["TableCards"]
+
+        for pCard in visibleCards:
+            possibleKickers.append(
+                Hand(
+                    name    = "highCard",
+                    cards   = [pCard],
+                    chance  = 1
+            ))
+
+        return possibleKickers
 
     def getPossibleOnePairs(self, player):
 
@@ -131,6 +158,9 @@ class PokerStatter():
         return possibleOnePairs
     
     def getPossibleTwoPairs(self,player):
+
+        possibleTwoPairs = []
+
         pass
 
     #endregion
@@ -176,8 +206,11 @@ class PokerStatter():
             # two pair? 
             # trips?
             # straight?
-            
-            if hand1.name == "onePair":
+            if hand1.name == "highCard":
+
+                return self.highest(hand1.cards[0].value, hand2.cards[0].value)
+
+            elif hand1.name == "onePair":
 
                 return self.highest(hand1.cards[0].value, hand2.cards[0].value)
 
@@ -218,6 +251,8 @@ class PokerStatter():
     #   Returns:    the percent chance of getting a card that matches the supplied criteria
     def chanceOfCard(self, player, suit = None, value = None):
         
+        accumulativeChance = 0
+
         remainingCardsCount = float(52 - len(self.audienceCards))
 
         otherPlayerCards = []
@@ -236,11 +271,22 @@ class PokerStatter():
             for c in otherPlayerCards:
                 if c.value == value and c.suit == suit:
                     return 0
-            return 1/remainingCardsCount
+
+            for i in range(self.tableCardsLeft):
+                accumulativeChance += 1/(remainingCardsCount-i)
+            return accumulativeChance
+
         elif suit == None and value != None:
-            return self.remainCardsDict[value]/remainingCardsCount
+
+            for i in range(self.tableCardsLeft):
+                accumulativeChance += self.remainCardsDict[value]/(remainingCardsCount-i)
+            return accumulativeChance
+
         elif suit != None and value == None:
-            return  self.remainCardsDict[suit.name[0]]/remainingCardsCount
+
+            for i in range(self.tableCardsLeft):
+                accumulativeChance += self.remainCardsDict[suit.name[0]]/(remainingCardsCount-i)
+            return  accumulativeChance
         else:
             return "u knob"
 
