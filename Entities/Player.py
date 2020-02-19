@@ -1,4 +1,4 @@
-from Entities.Hand import handEnum
+from Entities.HandEnum import handEnum
 
 class Player():
 
