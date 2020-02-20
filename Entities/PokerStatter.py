@@ -19,7 +19,6 @@ class PokerStatter():
     currentHighestHand = Hand("default")
     currentHighestHandHolder = -1
 
-
     #endregion
     
 
@@ -52,18 +51,17 @@ class PokerStatter():
                     p.cumulativeChance += h.chance * 100
                     totalChance += h.chance * 100
 
-                if p.Id == self.currentHighestHandHolder:
+                if p.Id == self.currentHighestHandHolder and p.isTied == False:
+                    #weight the player with the highest hand
                     p.cumulativeChance += 100
                     totalChance += 100
 
         for p in players:
-
             p.relativeChance = p.cumulativeChance / totalChance * 100
             chancesPerPlayer[p.Id] = p.relativeChance
-
-                # change this to look at ratio of players hand chance to the rest of the ratios
                 
         return chancesPerPlayer
+
 
     #region Generic hand management 
 
@@ -78,7 +76,7 @@ class PokerStatter():
 
         self.currentHighestHand = self.getHighestCurrentHand(players)
 
-        # self.checkForTie() ?
+        self.checkForTie(players)
 
         for p in players: 
 
@@ -241,17 +239,11 @@ class PokerStatter():
     def checkForTie(self,players):
 
         for p in players:
-            if p.Id != self.currentHighestHandHolder:
-                for key in p.possibleHands:
-                    if handEnum[key].value == handEnum[self.currentHighestHand.name].value:
-                        for hand in p.possibleHands[key]:
-                            if self.compareHands(hand, self.currentHighestHand) == 0:
-                                #tie  
-                                pass
-
-
-                
-
+            for key in p.possibleHands:
+                if handEnum[key].value == handEnum[self.currentHighestHand.name].value:
+                    for hand in p.possibleHands[key]:
+                        if self.compareHands(hand, self.currentHighestHand) == 0:
+                            p.isTied = True
 
     def highest(self, value1, value2):
         if value1 > value2:

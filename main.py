@@ -6,7 +6,7 @@ from Entities.Printer import Printer
 
 t = Table(2)
 
-testPlayerCards = [[12,23],[25,36]]
+testPlayerCards = [[12,24],[25,36]]
 testTableCards = [10,1,2,3,4]
 
 t.seed(testPlayerCards,testTableCards)

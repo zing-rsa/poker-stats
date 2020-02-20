@@ -9,6 +9,7 @@ class Player():
     possibleWinningHands = []
     cumulativeChance = 0
     relativeChance = 0
+    isTied = False
 
     def __init__(self, _Id, _cards):
         self.Id = _Id
