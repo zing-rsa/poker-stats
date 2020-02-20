@@ -48,17 +48,20 @@ class PokerStatter():
         self.getPossibleWinningHands(players)
 
         for p in players:
-
-            if p.Id != self.currentHighestHandHolder:
-
                 for h in p.possibleWinningHands:
-                    playerChance += h.chance
-                    totalChance += h.chance
+                    p.cumulativeChance += h.chance * 100
+                    totalChance += h.chance * 100
 
-                chancesPerPlayer[p.Id] = playerChance * 100
+                if p.Id == self.currentHighestHandHolder:
+                    p.cumulativeChance += 100
+                    totalChance += 100
+
+        for p in players:
+
+            p.relativeChance = p.cumulativeChance / totalChance * 100
+            chancesPerPlayer[p.Id] = p.relativeChance
+
                 # change this to look at ratio of players hand chance to the rest of the ratios
-        
-        chancesPerPlayer[self.currentHighestHandHolder] = 100 - (totalChance * 100)
                 
         return chancesPerPlayer
 
@@ -74,6 +77,8 @@ class PokerStatter():
             p.possibleHands = self.getAllPossibleHands(p)
 
         self.currentHighestHand = self.getHighestCurrentHand(players)
+
+        # self.checkForTie() ?
 
         for p in players: 
 
@@ -167,6 +172,7 @@ class PokerStatter():
 
     #region Comparisons and Highs 
 
+
     #   Return the highest hand out of all of the players
     #   Expects: players - list of player objects
     #   Returns: A Hand object containing the cards and name of the highest current hand
@@ -181,9 +187,12 @@ class PokerStatter():
 
                         testHand = Hand(h.name, h.cards)
 
-                        if self.compareHands(testHand, highestHand) == 1:
+                        winningHand = self.compareHands(testHand, highestHand)
+
+                        if winningHand == 1:
                             highestHand = testHand
                             self.currentHighestHandHolder = p.Id
+
         
         return highestHand
 
@@ -228,6 +237,21 @@ class PokerStatter():
                 pass
             elif hand1.name == "straightflush":
                 pass
+
+    def checkForTie(self,players):
+
+        for p in players:
+            if p.Id != self.currentHighestHandHolder:
+                for key in p.possibleHands:
+                    if handEnum[key].value == handEnum[self.currentHighestHand.name].value:
+                        for hand in p.possibleHands[key]:
+                            if self.compareHands(hand, self.currentHighestHand) == 0:
+                                #tie  
+                                pass
+
+
+                
+
 
     def highest(self, value1, value2):
         if value1 > value2:

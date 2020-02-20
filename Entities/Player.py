@@ -7,6 +7,8 @@ class Player():
     currentHighestHand = handEnum.default
     possibleHands = {}
     possibleWinningHands = []
+    cumulativeChance = 0
+    relativeChance = 0
 
     def __init__(self, _Id, _cards):
         self.Id = _Id
