@@ -12,6 +12,7 @@ testTableCards = [10,1,2,3,4]
 t.seed(testPlayerCards,testTableCards)
 
 t.nextBettingRound()
+t.nextBettingRound()
 
 pr = Printer()
 

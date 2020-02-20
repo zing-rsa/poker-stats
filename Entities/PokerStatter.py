@@ -86,8 +86,10 @@ class PokerStatter():
 
                 if handEnum[key].value >= handEnum[self.currentHighestHand.name].value:
 
-                    for hand in p.possibleHands[key]: #all hands(possible or not) better than the currentHighestHand
+                    for hand in p.possibleHands[key]:
                         if hand.chance != 0 and self.compareHands(hand, self.currentHighestHand) == 1:
+                            # need to find a way to check if the result would mean that another player 
+                            # would have a higher hand
                             handsToCheck.append(hand)
             
             p.possibleWinningHands = handsToCheck
@@ -241,14 +243,20 @@ class PokerStatter():
 
     def checkForTie(self,players):
 
+        tiedPlayers = []
+
         for p in players:
-            for key in p.possibleHands:
-                if handEnum[key].value == handEnum[self.currentHighestHand.name].value:
-                    for hand in p.possibleHands[key]:# needs to not check possible hands but currentHighestHand
-                        if self.compareHands(hand, self.currentHighestHand) == 0:
-                            p.isTied = True 
-                            # this runs for every Jack one pair in his hand
-                            # try running only through the p.currentHighestHand
+            # for key in p.possibleHands:
+            #     if handEnum[key].value == handEnum[self.currentHighestHand.name].value:
+            #         for hand in p.possibleHands[key]:# needs to not check possible hands but currentHighestHand
+            if self.compareHands(p.currentHighestHand, self.currentHighestHand) == 0:
+                tiedPlayers.append(p.Id)
+
+            if len(tiedPlayers) > 1:
+                for i in range(len(tiedPlayers)):
+                    players[i].isTied = True
+            # this runs for every Jack one pair in his hand
+            # try running only through the p.currentHighestHand
 
     def highest(self, value1, value2):
         if value1 > value2:
