@@ -186,10 +186,13 @@ class PokerStatter():
                         testHand = Hand(h.name, h.cards)
 
                         winningHand = self.compareHands(testHand, highestHand)
+                        winningHandPlayer = self.compareHands(testHand, p.currentHighestHand)
 
                         if winningHand == 1:
                             highestHand = testHand
                             self.currentHighestHandHolder = p.Id
+                        if winningHandPlayer == 1:
+                            p.currentHighestHand = testHand
 
         
         return highestHand
@@ -241,9 +244,11 @@ class PokerStatter():
         for p in players:
             for key in p.possibleHands:
                 if handEnum[key].value == handEnum[self.currentHighestHand.name].value:
-                    for hand in p.possibleHands[key]:
+                    for hand in p.possibleHands[key]:# needs to not check possible hands but currentHighestHand
                         if self.compareHands(hand, self.currentHighestHand) == 0:
-                            p.isTied = True
+                            p.isTied = True 
+                            # this runs for every Jack one pair in his hand
+                            # try running only through the p.currentHighestHand
 
     def highest(self, value1, value2):
         if value1 > value2:

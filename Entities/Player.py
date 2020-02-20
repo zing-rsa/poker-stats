@@ -1,10 +1,11 @@
 from Entities.HandEnum import handEnum
+from Entities.Hand import Hand
 
 class Player():
 
     Id = -1
     cards = []
-    currentHighestHand = handEnum.default
+    currentHighestHand = Hand("default")
     possibleHands = {}
     possibleWinningHands = []
     cumulativeChance = 0
