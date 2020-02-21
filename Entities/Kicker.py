@@ -1,16 +1,17 @@
 import enum
 
 class KickerEnum(enum.Enum):
-    Ace = 1
-    _2 = 2
-    _3 = 3
-    _4 = 4
-    _5 = 5
-    _6 = 6
-    _7 = 7
-    _8 = 8
-    _9 = 9
-    _10 = 10
-    Jack = 11
-    Queen = 12
-    King = 13
+    
+    _2 = 1
+    _3 = 2
+    _4 = 3
+    _5 = 4
+    _6 = 5
+    _7 = 6
+    _8 = 7
+    _9 = 8
+    _10 = 9
+    Jack = 10
+    Queen = 11
+    King = 12
+    Ace = 13

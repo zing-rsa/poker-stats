@@ -13,7 +13,7 @@ class Card():
         self.suit = _suit
     
     def toString(self):
-        return f"{str(KickerEnum(self.value).name).replace('_','')} of {self.suit.name}"
+        return f"{str(KickerEnum(self.value-1).name).replace('_','')} of {self.suit.name}"
 
     def toShortString(self):
         return f"{str(self.value)}{str(self.suit.name)[0]}"
