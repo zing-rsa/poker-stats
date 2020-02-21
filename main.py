@@ -6,8 +6,8 @@ from Entities.Printer import Printer
 
 t = Table(2)
 
-testPlayerCards = [[12,24],[25,36]]
-testTableCards = [10,1,2,3,4]
+testPlayerCards = [[12,24],[38,36]]
+testTableCards = [25,1,2,3,4]
 
 t.seed(testPlayerCards,testTableCards)
 
@@ -33,6 +33,8 @@ pr.printTableCardsExposed(t.tableCards)
 p = PokerStatter()
 
 print("\nChances per Player:", end="\n\n")
+
+allCardsDict = t.getAllCardsDict()
 
 print(p.genChancePerPlayer(t.getAllCardsDict(), t.players))
 

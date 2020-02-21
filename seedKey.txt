@@ -1,54 +1,52 @@
-Id  |  Val | Suit
-
-0	|	1	Hearts
-1	|	2	Hearts
-2	|	3	Hearts
-3	|	4	Hearts
-4	|	5	Hearts
-5	|	6	Hearts
-6	|	7	Hearts
-7	|	8	Hearts
-8	|	9	Hearts
-9	|	10	Hearts
-10	|	11	Hearts
-11	|	12	Hearts
-12	|	13	Hearts
-13	|	1	Spades
-14	|	2	Spades
-15	|	3	Spades
-16	|	4	Spades
-17	|	5	Spades
-18	|	6	Spades
-19	|	7	Spades
-20	|	8	Spades
-21	|	9	Spades
-22	|	10	Spades
-23	|	11	Spades
-24	|	12	Spades
-25	|	13	Spades
-26	|	1	Clubs
-27	|	2	Clubs
-28	|	3	Clubs
-29	|	4	Clubs
-30	|	5	Clubs
-31	|	6	Clubs
-32	|	7	Clubs
-33	|	8	Clubs
-34	|	9	Clubs
-35	|	10	Clubs
-36	|	11	Clubs
-37	|	12	Clubs
-38	|	13	Clubs
-39	|	1	Diamonds
-40	|	2	Diamonds
-41	|	3	Diamonds
-42	|	4	Diamonds
-43	|	5	Diamonds
-44	|	6	Diamonds
-45	|	7	Diamonds
-46	|	8	Diamonds
-47	|	9	Diamonds
-48	|	10	Diamonds
-49	|	11	Diamonds
-50	|	12	Diamonds
-51	|	13	Diamonds
+0	|	2  of	Hearts
+1	|	3  of	Hearts
+2	|	4  of	Hearts
+3	|	5  of	Hearts
+4	|	6  of	Hearts
+5	|	7  of	Hearts
+6	|	8  of	Hearts
+7	|	9  of	Hearts
+8	|	10  of	Hearts
+9	|  Jack  of	Hearts
+10	| Queen  of	Hearts
+11	|  King  of	Hearts
+12	|  Ace  of	Hearts
+13	|	2  of	Spades
+14	|	3  of	Spades
+15	|	4  of	Spades
+16	|	5  of	Spades
+17	|	6  of	Spades
+18	|	7  of	Spades
+19	|	8  of	Spades
+20	|	9  of	Spades
+21	|	10  of	Spades
+22	|  Jack  of	Spades
+23	| Queen  of	Spades
+24	|  King  of	Spades
+25	|  Ace  of	Spades
+26	|	2  of	Clubs
+27	|	3  of	Clubs
+28	|	4  of	Clubs
+29	|	5  of	Clubs
+30	|	6  of	Clubs
+31	|	7  of	Clubs
+32	|	8  of	Clubs
+33	|	9  of	Clubs
+34	|	10  of	Clubs
+35	|  Jack  of	Clubs
+36	| Queen  of	Clubs
+37	|  King  of	Clubs
+38	|  Ace  of	Clubs
+39	|	2  of	Diamonds
+40	|	3  of	Diamonds
+41	|	4  of	Diamonds
+42	|	5  of	Diamonds
+43	|	6  of	Diamonds
+44	|	7  of	Diamonds
+45	|	8  of	Diamonds
+46	|	9  of	Diamonds
+47	|	10  of	Diamonds
+48	|  Jack  of	Diamonds
+49	| Queen  of	Diamonds
+50	|  King  of	Diamonds
+51	|  Ace  of	Diamonds

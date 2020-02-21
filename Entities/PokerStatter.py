@@ -55,11 +55,14 @@ class PokerStatter():
                     #weight the player with the highest hand
                     p.cumulativeChance += 100
                     totalChance += 100
-
+        
         for p in players:
-            p.relativeChance = p.cumulativeChance / totalChance * 100
-            chancesPerPlayer[p.Id] = p.relativeChance
-                
+            if totalChance == 0 or p.cumulativeChance == 0:
+                chancesPerPlayer[p.Id] = 0
+            else:
+                p.relativeChance = p.cumulativeChance / totalChance * 100
+                chancesPerPlayer[p.Id] = p.relativeChance
+         
         return chancesPerPlayer
 
 
