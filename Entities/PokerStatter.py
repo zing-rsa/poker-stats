@@ -13,6 +13,7 @@ class PokerStatter():
     allCardsDict = {}
     remainCardsDict = {}
     audienceCards = []
+    allCards = []
 
     tableCardsLeft = 5
 
@@ -32,6 +33,9 @@ class PokerStatter():
         audienceCards = []
         totalChance = 0
         playerChance = 0
+
+        for key in allCardsDict:
+            self.allCards += allCardsDict[key]
 
         for key in allCardsDict:
             if key == "leftOverCards":
@@ -82,21 +86,28 @@ class PokerStatter():
         self.checkForTie(players)
 
         for p in players: 
-
             handsToCheck = []
-
             for key in p.possibleHands:
-
                 if handEnum[key].value >= handEnum[self.currentHighestHand.name].value:
-
                     for hand in p.possibleHands[key]:
-                        if hand.chance != 0 and self.compareHands(hand, self.currentHighestHand) == 1:
+                        if hand.chance != 0 and self.compareHands(hand, self.currentHighestHand) == 1 and self.checkForOpponentWin(p, players, hand) == False:
                             # need to find a way to check if the result would mean that another player 
                             # would have a higher hand
                             handsToCheck.append(hand)
-            
+
             p.possibleWinningHands = handsToCheck
 
+
+
+    def checkForOpponentWin(self, player, opponents, hand):
+        for o in opponents:
+            if o.Id != player.Id:
+                for key in o.possibleHands:
+                    for ohand in o.possibleHands[key]:
+                        if len(ohand.outsNeeded) == 1  and ohand.outsNeeded[0].Id == hand.outsNeeded[0].Id and self.compareHands(ohand, hand) == 1:
+                            return True
+        
+        return False
 
     #   Generates a dictionary of hands
     #   Expects:    player - the player object to use
@@ -107,7 +118,7 @@ class PokerStatter():
         chancesPerHand = {
             "highCard"  : self.getPossibleKickers(player), 
             "onePair"   : self.getPossibleOnePairs(player),
-        #    "twoPair"   : self.getPossibleTwoPairs(player)
+            "twoPair"   : self.getPossibleTwoPairs(player)
         #    "trips"     : self.getPossibleTrips(player)
         #    "straight"  : self.getPossibleStraights(player)
         #    "flush"     : self.getPossibleFlushes(player)
@@ -146,21 +157,17 @@ class PokerStatter():
 
         possibleOnePairs = []
 
-        allCards = []
-
-        for key in self.allCardsDict:
-            allCards += self.allCardsDict[key]
-        
         visibleCards = player.cards + self.allCardsDict["TableCards"]
         
-        for pCard in visibleCards :
-            for c in allCards:
-                if pCard.value == c.value and pCard.suit != c.suit:
+        for pCard in visibleCards:
+            for c in self.allCards:
+                if pCard.value == c.value and pCard.Id != c.Id: # marking this incase it fucks out, check was: pCard.suit != c.suit
                     possibleOnePairs.append(
                         Hand(
                             name    = "onePair",
                             cards   = [pCard,c],
-                            chance  = self.chanceOfCard(player, c.suit, c.value)
+                            chance  = self.chanceOfCard(player, c.suit, c.value),
+                            outsNeeded = [c] 
                         ))
                         
         return possibleOnePairs
@@ -169,7 +176,23 @@ class PokerStatter():
 
         possibleTwoPairs = []
 
-        pass
+        visibleCards = player.cards + self.allCardsDict["TableCards"]
+
+        for card1 in visibleCards:
+            for c1 in self.allCards: 
+                if card1.value == c1.value and card1.Id != c1.Id:
+
+                    for card2 in visibleCards:
+                        if card2.Id != card1.Id and card2.value != card1.value:
+                            for c2 in self.allCards:  
+                                if card2.value == c2.value and card2.Id != c2.Id:
+                                    possibleTwoPairs.append(
+                                            Hand(
+                                                name    = "twoPair",
+                                                cards   = [card1,c1,card2,c2],
+                                                outsNeeded = [c1,c2] 
+                                            ))
+        return possibleTwoPairs
 
     #endregion
 
