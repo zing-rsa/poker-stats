@@ -129,6 +129,29 @@ class PokerStatter():
 
         return chancesPerHand
 
+
+        chancesPerHand = {
+            {
+                name: "highCard",
+                allHands: self.getPossibleKickers(player), 
+                overAllChance: 50%
+            },
+            {
+                name: "highCard",
+                allHands: self.getPossibleKickers(player), 
+                overAllChance: 50%
+            },
+            {
+                name: "highCard",
+                allHands: self.getPossibleKickers(player), 
+                overAllChance: 50%
+            }
+
+            "onePair"   : self.getPossibleOnePairs(player),
+            "twoPair"   : self.getPossibleTwoPairs(player)
+        
+        }
+
     #endregion
     
     #region Specific chance of hand calculation methods 
