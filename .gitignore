@@ -1,2 +1,5 @@
 # ignore cache files
 *.pyc
+
+#ignore vscode launch
+launch.json
