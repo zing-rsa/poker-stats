@@ -90,7 +90,7 @@ class PokerStatter():
             for key in p.possibleHands:
                 if handEnum[key].value >= handEnum[self.currentHighestHand.name].value:
                     for hand in p.possibleHands[key]:
-                        if hand.chance != 0 and self.compareHands(hand, self.currentHighestHand) == 1 and self.checkForOpponentWin(p, players, hand) == False:
+                        if hand.chance != 0 and self.compareHands(hand, self.currentHighestHand) == 1 and self.checkForOpponentWin(p, players, hand) == False :
                             # need to find a way to check if the result would mean that another player 
                             # would have a higher hand
                             handsToCheck.append(hand)
@@ -137,13 +137,13 @@ class PokerStatter():
                 overAllChance: 50%
             },
             {
-                name: "highCard",
-                allHands: self.getPossibleKickers(player), 
+                name: "OnePairs",
+                allHands: self.getPossibleOnePairs(player), 
                 overAllChance: 50%
             },
             {
-                name: "highCard",
-                allHands: self.getPossibleKickers(player), 
+                name: "TwoPairs",
+                allHands: self.getPossibleTwoPairs(player), 
                 overAllChance: 50%
             }
 
@@ -151,6 +151,28 @@ class PokerStatter():
             "twoPair"   : self.getPossibleTwoPairs(player)
         
         }
+
+
+    def getChanceOfOnePair(self, player):
+
+        totalChance = 0
+
+        visibleCards = player.cards
+
+        if self.tableCardsLeft == 1:
+            for card in visibleCards:
+                pairValue = card.value
+                totalChance += /remainingCardsCount
+        elif self.tableCardsLeft == 2:
+            for card in visibleCards:
+                pairValue = card.value
+                totalChance += ((1/remainingCardsCount) * (remainingCardsCount - 1/remainingCardsCount-1)) * 2
+
+        elif self.tableCardsLeft == 5:
+            pass
+
+        return totalChance
+
 
     #endregion
     
