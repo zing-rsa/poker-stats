@@ -57,19 +57,9 @@ class PokerStatter():
         for p in self.players:
                 for h in p.possibleWinningHands:
                     p.cumulativeChance += h.chance * 100
-                    totalChance += h.chance * 100
-
-                if p.Id == self.currentHighestHandHolder and p.isTied == False:
-                    #weight the player with the highest hand
-                    p.cumulativeChance += 100
-                    totalChance += 100
         
         for p in self.players:
-            if totalChance == 0 or p.cumulativeChance == 0:
-                chancesPerPlayer[p.Id] = 0
-            else:
-                p.relativeChance = p.cumulativeChance / totalChance * 100
-                chancesPerPlayer[p.Id] = p.relativeChance
+            chancesPerPlayer[p.Id] = p.cumulativeChance
          
         return chancesPerPlayer
 
@@ -92,14 +82,14 @@ class PokerStatter():
         for p in self.players: 
             handsToCheck = []
             for key in p.possibleHands:
-                if handEnum[key].value >= handEnum[self.currentHighestHand.name].value:
-                    for hand in p.possibleHands[key]:
-                        if hand.chance != 0 and self.compareHands(hand, self.currentHighestHand) == 1 and self.checkForOpponentWin(p, hand) == False :
-                            # need to find a way to check if the result would mean that another player 
-                            # would have a higher hand
-                            handsToCheck.append(hand)
+                for hand in p.possibleHands[key]:
+                    if hand.chance != 0 and self.compareHands(hand, self.currentHighestHand) == 1 and self.checkForOpponentWin(p, hand) == False :
+                        # need to find a way to check if the result would mean that another player 
+                        # would have a higher hand
+                        handsToCheck.append(hand)
 
             p.possibleWinningHands = handsToCheck
+    
 
     def checkForOpponentWin(self, player, hand):
         for opponent in self.players:
@@ -131,27 +121,7 @@ class PokerStatter():
 
         return chancesPerHand
     
-    # def getChanceOfOnePair(self, player):
-
-    #     totalChance = 0
-    #     visibleCards = player.cards
-    #     remainingCardsCount = float(52 - len(self.audienceCards))
-
-    #     if self.tableCardsLeft == 1:
-    #         for card in visibleCards:
-    #             pairValue = card.value
-    #             totalChance += 1/remainingCardsCount
-    #     elif self.tableCardsLeft == 2:
-    #         for card in visibleCards:
-    #             pairValue = card.value
-    #             totalChance += ((1/remainingCardsCount) * (remainingCardsCount - 1/remainingCardsCount-1)) * 2
-
-    #     elif self.tableCardsLeft == 5:
-    #         pass
-
-    #     return totalChance
-
-
+    
     #endregion
     
     #region Specific chance of hand calculation methods 
@@ -160,7 +130,7 @@ class PokerStatter():
     #   Expect:    player: current player object
     #   Return:    a list of Hand objects
 
-    def getPossibleKickers(self,player):
+    def getPossibleKickers(self, player):
 
         possibleKickers = []
 
@@ -192,11 +162,47 @@ class PokerStatter():
                             outsNeeded = [c] 
                     )
 
-                    possibleHand.chance = self.chanceOfHitting(player, possibleHand)
+                    possibleHand.chance = self.getChanceOfOnePair(player, possibleHand)
 
                     possibleOnePairs.append(possibleHand)
                         
         return possibleOnePairs
+    
+    def getChanceOfOnePair(self, player, hand):
+
+        out = hand.outsNeeded[0]
+
+        remainingCardsCount = float(52 - len(self.audienceCards))
+
+        if len(hand.outsNeeded) > self.tableCardsLeft:
+            return 0
+
+        for opponent in self.players:
+            if opponent.Id != player.Id:
+                for opCard in opponent.cards:
+                    if opCard.Id == out.Id:
+                        #opponent holds one card, 0% chance of hitting hand
+                        return 0
+        
+        for card in self.allCardsDict["TableCards"]:
+            if card.Id == out.Id and self.getOccurencesPerCard(self.allCardsDict["TableCards"])[out.value] == 1:
+                    #required card was hit, player has hand
+                    return 1
+
+        if self.tableCardsLeft == 1:
+            totalChance = (1/remainingCardsCount)
+
+        elif self.tableCardsLeft == 2:
+            totalChance = (1/remainingCardsCount) * ((remainingCardsCount - 1 - (self.remainCardsDict[out.value]-1))/remainingCardsCount-1) * 2
+
+        else:
+            totalChance = 1 
+                     # formula here is : 1/rcc * rcc-3/rcc-1 * rcc-4/rcc-2 * rcc-5/rcc-3 * rcc-6/rcc-4 - 
+                     # But need to account for the possibility that another player has gotten a card with the 
+                     # same value, meaning your chances are lower
+
+        return totalChance
+
     
     def getPossibleTwoPairs(self,player):
 
@@ -333,43 +339,18 @@ class PokerStatter():
     def chanceOfHitting(self, player, hand):
 
         totalChance = 0
-        visibleCards = player.cards
-        remainingCardsCount = float(52 - len(self.audienceCards))
-
-        if len(hand.cards) > self.tableCardsLeft:
-            return 0
-
-        for out in hand.outsNeeded:
-            for opponent in self.players:
-                if opponent.Id != player.Id:
-                    for opCard in opponent.cards:
-                        if opCard.Id == out.Id:
-                            #opponent holds one card, 0% chance of hitting hand
-                            return 0
         
-        cardsHit = []
-        for out in hand.outsNeeded:
-            for card in self.allCardsDict["TableCards"]:
-                if card.Id == out.Id: 
-                    cardsHit.append(out.Id)
-                    if len(cardsHit) == len(hand.outsNeeded):
-                        #all required cards are hit, player has hand
-                        return 1
+
+        
 
 
-        if self.tableCardsLeft == 1:
-            for card in hand.Cards:
-
-                if card.Id not in cardsHit:
-                    totalChance *= (1/remainingCardsCount)
 
 
-        elif self.tableCardsLeft == 2:
-            for card in visibleCards:
 
-                if card.Id not in cardsHit:
-                    totalChance *= ((1/remainingCardsCount) * (remainingCardsCount - 1/remainingCardsCount-1)) * 2
 
+
+
+        
         return totalChance
     
 
@@ -431,10 +412,10 @@ class PokerStatter():
         suits = ["C","H","S","D"]
 
         for i in range(13):
-            if (i+1) in occurencesPerCard:
-                remaining[i+1] = 4 - occurencesPerCard[i+1]
+            if (i+2) in occurencesPerCard:
+                remaining[i+2] = 4 - occurencesPerCard[i+2]
             else:
-                remaining[i+1] = 4
+                remaining[i+2] = 4
 
         for s in suits:
             if s in occurencesPerCard:
@@ -451,10 +432,8 @@ class PokerStatter():
     #               of the specific key exist in the card set
     def getOccurencesPerCard(self, cardSet):
         tempDict = {
-            "C": 0,
-            "D": 0,
-            "S": 0,
-            "H": 0
+            "C": 0,"D": 0,"S": 0,"H": 0,
+            "2": 0,"3": 0,"4": 0,"5": 0,"6": 0,"7": 0,"8": 0,"9": 0,"10": 0,"11": 0,"12": 0,"13": 0,"14": 0
         }
 
         for c in cardSet:

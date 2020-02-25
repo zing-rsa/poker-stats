@@ -435,3 +435,81 @@ What combinations conincide???
 
 
 The term (1-(outs/45)) indicated the chance that you didn't hit on the turn. Because if you did, then you wouldn't need the river card, would you.
+
+
+ ((1/remainingCardsCount) * (remainingCardsCount - 1/remainingCardsCount-1)) * 2
+
+
+ 52
+ 5c
+ 1/52
+
+ 45
+ 5c
+ 1/44
+
+ 5c
+
+P(getting a specific card) = P(hit on turn) + P(hit on river)
+                            1/rcc + ((rcc-1)/rcc) * (1/(rcc-1))
+                            
+                            
+                            1/45 + 44/45 * 1/44
+
+
+
+
+
+
+"onePair"   : [hand,hand hand]
+"twoPair"   : [hand,hand hand]
+
+
+
+hand: [5d,     5c]( 1/rcc * rcc-1-rvc/rcc-1 * 2 )
+
+hand: [5d,     5s]( 1/rcc * rcc-1-rvc/rcc-1 * 2 )
+
+hand: [5d,     5h]( 1/rcc * rcc-1-rvc/rcc-1 * 2 )
+
+[6h, 5d]
+
+[5d,5c]     outs: [5c]
+[5d,5h]     outs: [5h]
+[5d,5s]     outs: [5s]
+[6h,6c]     outs: [6c]
+[6h,6s]     outs: [6s]
+[6h,6d]     outs: [6d]
+
+
+1/48 * 45/47 * 44/46 * 43/45 * 42/44 * 5 = 0.087 per suit of same valued card
+45/48 * 1/47 * 44/46 * 43/45 * 42/44
+
+general formula pre flop probabilties
+
+n = number of players
+rcc = 52 - 2n
+
+1/rcc * rcc-3/rcc-1 * rcc-4/rcc-2 * rcc-5/rcc-3 * rcc-6/rcc-4
+
+
+
+2 5
+outs: [5c]
+
+1/45 * 42/44 + 42/45 * 1/44
+
+
+!!!one pair only!!!!
+( 1/rcc * rcc-1-rvc/rcc-1 * 2 )
+!!!one pair only!!!!
+
+1 pair before flop
+2 players
+remaing cards = 48
+P1 cards: 5D, 6D
+P2 cards: does not have a 5
+P(hitting 1 pair of 5's in the game)
+1/48 * 45/47 * 44/46 * 43/45 * 42/44 
+
+
