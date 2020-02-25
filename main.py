@@ -11,18 +11,17 @@ testTableCards = [25,1,2,3,4]
 
 t.seed(testPlayerCards,testTableCards)
 
+t.nextBettingRound()
+
 pr = Printer()
 
 print("\nPlayers:", end="\n\n")
-
 pr.printPlayers(t.players)
 
 print("\nNot Exposed Table:", end="\n\n")
-
 pr.printTableCards(t.tableCards)
 
 print("\nExposed Table:", end="\n\n")
-
 pr.printTableCardsExposed(t.tableCards)
 
 
@@ -32,9 +31,6 @@ p = PokerStatter()
 print("\nChances per Player:", end="\n\n")
 
 print(p.genChancePerPlayer(t.getAllCardsDict(), t.players))
-
-
-
 
 
 #chancesPerPlayer = 
