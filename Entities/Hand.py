@@ -11,3 +11,16 @@ class Hand():
         if cards  is not None: self.cards  = cards
         if chance is not None: self.chance = chance
         if outsNeeded is not None: self.outsNeeded = outsNeeded
+
+
+   def toString(self):
+
+      outstring = "["
+      comma = ""
+
+      for c in self.cards:
+         outstring += comma + c.toShortString()
+         comma = ","
+      outstring += "]"
+
+      return outstring
