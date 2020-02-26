@@ -57,6 +57,8 @@ class PokerStatter():
         for p in self.players:
                 for h in p.possibleWinningHands:
                     p.cumulativeChance += h.chance * 100
+
+                    print("Player: " + str(p.Id) + "     hand: " + h.toString()  + "    h.chance: " + str(h.chance) + "    cumulativeChance: " + str(p.cumulativeChance) )
         
         for p in self.players:
             chancesPerPlayer[p.Id] = p.cumulativeChance
@@ -110,7 +112,7 @@ class PokerStatter():
         chancesPerHand = {
             "highCard"  : self.getPossibleKickers(player), 
             "onePair"   : self.getPossibleOnePairs(player),
-            "twoPair"   : self.getPossibleTwoPairs(player)
+        #    "twoPair"   : self.getPossibleTwoPairs(player)
         #    "trips"     : self.getPossibleTrips(player)
         #    "straight"  : self.getPossibleStraights(player)
         #    "flush"     : self.getPossibleFlushes(player)
@@ -150,7 +152,7 @@ class PokerStatter():
 
         possibleOnePairs = []
 
-        visibleCards = player.cards + self.allCardsDict["TableCards"]
+        visibleCards = player.cards # + self.allCardsDict["TableCards"]
         
         for pCard in visibleCards:
             for c in self.allCards:
@@ -189,47 +191,59 @@ class PokerStatter():
                     #required card was hit, player has hand
                     return 1
 
+        rcc = remainingCardsCount
+        rvc = self.remainCardsDict[out.value] - 1
+        print("rvc: " + str(rvc) + "   rcc: " + str(rcc))
         if self.tableCardsLeft == 1:
-            totalChance = (1/remainingCardsCount)
+            print("There is 1 card left to play")
+            totalChance = (1/rcc)
+            print(totalChance)
 
         elif self.tableCardsLeft == 2:
-            totalChance = (1/remainingCardsCount) * ((remainingCardsCount - 1 - (self.remainCardsDict[out.value]-1))/remainingCardsCount-1) * 2
+            totalChance = (1/rcc)*((rcc-1-rvc)/(rcc-1)) * 2
 
         else:
-            totalChance = 1 
-                     # formula here is : 1/rcc * rcc-3/rcc-1 * rcc-4/rcc-2 * rcc-5/rcc-3 * rcc-6/rcc-4 - 
-                     # But need to account for the possibility that another player has gotten a card with the 
-                     # same value, meaning your chances are lower
+            totalChance = ((1/rcc) * ((rcc-1-rvc)/(rcc-1)) * ((rcc-2-rvc)/(rcc-2)) * ((rcc-3-rvc)/(rcc-3)) * ((rcc-4-rvc)/(rcc-4)))  * 5
+            # formula here is : 1/rcc * rcc-3/rcc-1 * rcc-4/rcc-2 * rcc-5/rcc-3 * rcc-6/rcc-4 - 
+            # But need to account for the possibility that another player has gotten a card with the 
+            # same value, meaning your chances are lower
+            # specfic card, pre flop for !!!one pair!!!
+            # rcc (remainingCardCount left in deck, pre flop = 52 - 2n, n = # of players)
+            # rvc (remainingValuedCard)
 
         return totalChance
 
     
     def getPossibleTwoPairs(self,player):
+        pass
+        # possibleTwoPairs = []
 
-        possibleTwoPairs = []
+        # visibleCards = player.cards + self.allCardsDict["TableCards"]
 
-        visibleCards = player.cards + self.allCardsDict["TableCards"]
+        # for card1 in visibleCards:
+        #     for c1 in self.allCards: 
+        #         if card1.value == c1.value and card1.Id != c1.Id:
 
-        for card1 in visibleCards:
-            for c1 in self.allCards: 
-                if card1.value == c1.value and card1.Id != c1.Id:
-
-                    for card2 in visibleCards:
-                        if card2.Id != card1.Id and card2.value != card1.value:
-                            for c2 in self.allCards:
-                                if card2.value == c2.value and card2.Id != c2.Id:
+        #             for card2 in visibleCards:
+        #                 if card2.Id != card1.Id and card2.value != card1.value:
+        #                     for c2 in self.allCards:
+        #                         if card2.value == c2.value and card2.Id != c2.Id:
                                     
-                                    possibleHand = Hand(
-                                                name    = "twoPair",
-                                                cards   = [card1,c1,card2,c2],
-                                                outsNeeded = [c1,c2] 
-                                            )
+        #                             possibleHand = Hand(
+        #                                         name    = "twoPair",
+        #                                         cards   = [card1,c1,card2,c2],
+        #                                         outsNeeded = [c1,c2] 
+        #                                     )
 
-                                    possibleHand.chance = self.chanceOfHitting(player, possibleHand)
+        #                             possibleHand.chance = self.chanceOfTwoPair(player, possibleHand)
                                     
-                                    possibleTwoPairs.append(possibleHand)
+        #                             possibleTwoPairs.append(possibleHand)
                                             
-        return possibleTwoPairs
+        # return possibleTwoPairs
+
+
+    def chanceOfTwoPair(self):
+        pass
 
     #endregion
 
@@ -335,24 +349,6 @@ class PokerStatter():
     #endregion
 
     #region Card utilities 
-
-    def chanceOfHitting(self, player, hand):
-
-        totalChance = 0
-        
-
-        
-
-
-
-
-
-
-
-
-        
-        return totalChance
-    
 
     #   Retrieve the percent chance of getting a card with matching parameters
     #   Expects:    player  - the current player object being worked on 

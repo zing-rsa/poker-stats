@@ -6,12 +6,13 @@ from Entities.Printer import Printer
 
 t = Table(2)
 
-testPlayerCards = [[12,24],[38,36]]
-testTableCards = [25,1,2,3,4]
+testPlayerCards = [[3,6],[20,45]]
+testTableCards = [24,42,51,4,0]
 
 t.seed(testPlayerCards,testTableCards)
 
 t.nextBettingRound()
+#t.nextBettingRound()
 
 pr = Printer()
 
@@ -23,8 +24,6 @@ pr.printTableCards(t.tableCards)
 
 print("\nExposed Table:", end="\n\n")
 pr.printTableCardsExposed(t.tableCards)
-
-
 
 p = PokerStatter()
 
