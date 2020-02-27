@@ -113,7 +113,7 @@ class PokerStatter():
             "highCard"  : self.getPossibleKickers(player), 
             "onePair"   : self.getPossibleOnePairs(player),
         #    "twoPair"   : self.getPossibleTwoPairs(player)
-        #    "trips"     : self.getPossibleTrips(player)
+            "trips"     : self.getPossibleTrips(player)
         #    "straight"  : self.getPossibleStraights(player)
         #    "flush"     : self.getPossibleFlushes(player)
         #    "fullhouse" : self.getPossibleFullHouses(player)
@@ -122,7 +122,6 @@ class PokerStatter():
         }
 
         return chancesPerHand
-    
     
     #endregion
     
@@ -152,25 +151,35 @@ class PokerStatter():
 
         possibleOnePairs = []
 
-        visibleCards = player.cards # + self.allCardsDict["TableCards"]
-        
-        for pCard in visibleCards:
+        for pCard in player.cards:
             for c in self.allCards:
-                if pCard.value == c.value and pCard.Id != c.Id: # marking this incase it fucks out, check was: pCard.suit != c.suit
+                if pCard.value == c.value and pCard.Id != c.Id:
+
+                    for c1 in player.cards:
+                        if c1.Id != pCard.Id:
+                            #get the other card in your hand
+                            currentKicker = c1
 
                     possibleHand =  Hand(
                             name    = "onePair",
                             cards   = [pCard,c],
-                            outsNeeded = [c] 
+                            outsNeeded = [c],
+                            kickers = [currentKicker]
                     )
 
-                    possibleHand.chance = self.getChanceOfOnePair(player, possibleHand)
-
+                    if pCard not in self.allCardsDict["TableCards"]: # not sure about this
+                        possibleHand.chance = self.getChanceOfOnePair(player, possibleHand)
+                    else:
+                        possibleHand.chance = 1
+                    
                     possibleOnePairs.append(possibleHand)
                         
         return possibleOnePairs
     
     def getChanceOfOnePair(self, player, hand):
+
+        if hand.outsNeeded == []:
+            return 1
 
         out = hand.outsNeeded[0]
 
@@ -188,16 +197,19 @@ class PokerStatter():
         
         for card in self.allCardsDict["TableCards"]:
             if card.Id == out.Id and self.getOccurencesPerCard(self.allCardsDict["TableCards"])[out.value] == 1:
-                    #required card was hit, player has hand
+                    #required card was hit on table, player has hand
                     return 1
+
+        for card in player.cards:
+            if card.Id == out.Id:
+                #required card is inside players hand 
+                return 1
 
         rcc = remainingCardsCount
         rvc = self.remainCardsDict[out.value] - 1
-        print("rvc: " + str(rvc) + "   rcc: " + str(rcc))
+        
         if self.tableCardsLeft == 1:
-            print("There is 1 card left to play")
             totalChance = (1/rcc)
-            print(totalChance)
 
         elif self.tableCardsLeft == 2:
             totalChance = (1/rcc)*((rcc-1-rvc)/(rcc-1)) * 2
@@ -213,7 +225,6 @@ class PokerStatter():
 
         return totalChance
 
-    
     def getPossibleTwoPairs(self,player):
         pass
         # possibleTwoPairs = []
@@ -241,11 +252,102 @@ class PokerStatter():
                                             
         # return possibleTwoPairs
 
+    def getPossibleTrips(self, player):
 
-    def chanceOfTwoPair(self):
+        possibleTrips = []
+
+
+        for pCard in player.cards:
+            for c1 in self.allCards:
+                if pCard.value == c1.value and pCard.Id != c1.Id:
+                    for c2 in self.allCards:
+                        if pCard.value == c2.value and pCard.Id != c1.Id and pCard.Id != c2.Id and c1.Id != c2.Id:
+                            
+                            outsNeeded = []
+
+                            for c in [c1,c2]:
+                                if c not in self.allCardsDict["TableCards"] and c not in player.cards: # not sure about this
+                                    outsNeeded.append(c)
+
+                            for c in player.cards:
+                                if c.Id != pCard.Id:
+                                    #get the other card in your hand
+                                    currentKicker = c
+                            
+                            possibleHand =  Hand(
+                                    name    = "onePair",
+                                    cards   = [pCard,c1,c2],
+                                    outsNeeded = [c1,c2],
+                                    kickers = [currentKicker]
+                                )
+
+                            possibleHand.chance = self.chanceOfTrips(player, possibleHand)
+
+                            print(possibleHand.toString())
+
+        return possibleTrips
+            
+    def chanceOfTwoPair(self, player, hand):
         pass
 
     #endregion
+
+    def chanceOfTrips(self, player, hand):
+        #outsNeeded list of cards that are needed to hit teh combination
+        #outsNeeded card Objects
+        #outsNeeded = [Card1]
+        #scenario P1 has 5c => outsNeeded = [5h, 5s]...
+        #scenario P1 has 5c, 5d => outsNeeded = [5s]... 
+        #if I receive 1 card in outsNeeded, then I need to check that that card does not exist in the opponent(s) hand
+        #if I receive 2 cards in outsNeeded, then I still check if it is in the oppenents hand. If that card is in the oppennts hand, then remove that possible hand combination
+        
+        if hand.outsNeeded == []:
+            return 1
+
+        length = len(hand.outsNeeded)
+        self.getOccurencesPerCard(hand.cards)
+        #out = hand.outsNeeded[0]
+
+        remainingCardsCount = float(52 - len(self.audienceCards))
+
+        if len(hand.outsNeeded) > self.tableCardsLeft:
+            return 0
+        
+        # you can do this in a for loop through the outs [5h, 5s]
+        for out in hand.outsNeeded:#gets card in outsNeeded
+            for opponent in self.players:#tests for each opponent
+                if opponent.Id != player.Id:#checking to see that the opponent is not that player
+                    for opCard in opponent.cards:#runs through all of the oppenents cards
+                        if opCard.Id == out.Id:#check to see if the cards are the same
+                           #opponent holds one card, 0% chance of hitting hand
+                            return 0
+                            
+        cardsHitonTable = []
+        for out in hand.outsNeeded:
+            for card in self.allCardsDict["TableCards"]:
+                if card.Id == out.Id:  #and self.getOccurencesPerCard(self.allCardsDict["TableCards"])[out.value] == 1:
+                        #required card was hit, player has hand
+                        cardsHitonTable.append(out)
+
+                        if len(cardsHitonTable) == len(hand.outsNeeded):
+                            return 1
+
+        #only hit one or none on the table
+
+        
+
+        rcc = remainingCardsCount
+        rvc = self.remainCardsDict[out.value] - 1
+        if self.tableCardsLeft == 1:
+           
+            totalChance = (1/rcc)
+
+        elif self.tableCardsLeft == 2:
+            totalChance = (1/rcc)*((rcc-1-rvc)/(rcc-1)) * 2
+
+        else:
+            totalChance = ((1/rcc) * ((rcc-1-rvc)/(rcc-1)) * ((rcc-2-rvc)/(rcc-2)) * ((rcc-3-rvc)/(rcc-3)) * ((rcc-4-rvc)/(rcc-4)))  * 5
+
 
     #region Comparisons and Highs 
 
@@ -288,25 +390,30 @@ class PokerStatter():
         elif handEnum[hand1.name].value < handEnum[hand2.name].value:
             return 2
         else:
-            # same combo, find higher kicker(s)
+            # same combo, find higher value
 
-            # possible here to just find the highest card in the cards lists? 
-            # ie. one pair, if the highest card from p1.cards + p2.cards gives you the winner
-            # two pair? 
-            # trips?
-            # straight?
             if hand1.name == "highCard":
-
                 return self.highest(hand1.cards[0].value, hand2.cards[0].value)
 
             elif hand1.name == "onePair":
-
+                #need to implement kicker checking
+                # if self.highest(hand1.cards[0].value, hand2.cards[0].value) == 0:
+                    # return self.highest(hand1.kickers[0], hand2.kickers[0])
+                # else:
                 return self.highest(hand1.cards[0].value, hand2.cards[0].value)
+                
 
             elif hand1.name == "twoPair":
                 pass
+
+
             elif hand1.name == "trips":
-                pass
+                #need to implement kicker checking
+                # if self.highest(hand1.cards[0].value, hand2.cards[0].value) == 0:
+                #     return self.highest(hand1.kickers[0], hand2.kickers[0])
+                # else:
+                return self.highest(hand1.cards[0].value, hand2.cards[0].value)
+
             elif hand1.name == "straight":
                 pass
             elif hand1.name == "flush":

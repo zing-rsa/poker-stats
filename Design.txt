@@ -513,3 +513,33 @@ P(hitting 1 pair of 5's in the game)
 1/48 * 45/47 * 44/46 * 43/45 * 42/44 
 
 
+Trips:
+
+P1: 5c ?
+P2: ?  ?
+
+Outs: 5 H D S 3C2 = 3!/2!(3-2)! = 3!/2! = 6/2 = 3 
+5H, 5D
+5D, 5H
+5H, 5S
+5S, 5H
+5D, 5S
+5S, 5D
+
+
+Table
+?  ?  ?  X  X
+
+1/45 * 1/44 * 6 = P(hit trips on last 2 cards)
+
+Table 
+X  X  X  X  X
+
+xCy = x!/(y!(x-y)!)
+2c2 = 2!/2! = 1 x 2 = 2
+
+5c2 = 5!/2!3! = 10 = 20
+
+1/48 * 1/47 * 45/46 * 44/45 * 43/44  * 20 = P(hit trips in the game with 5H and 5D given we have 5c) = 0.00828707 = 0.828% * 3 = 2.5% 
+
+
