@@ -100,7 +100,7 @@ class PokerStatter():
         chancesPerHand = {
         #    "highCard"  : self.getPossibleKickers(player), 
             "onePair"   : self.getPossibleOnePairs(player),
-        #    "twoPair"   : self.getPossibleTwoPairs(player)
+            "twoPair"   : self.getPossibleTwoPairs(player),
             "trips"     : self.getPossibleTrips(player)
         #    "straight"  : self.getPossibleStraights(player)
         #    "flush"     : self.getPossibleFlushes(player)
@@ -131,7 +131,7 @@ class PokerStatter():
 
         return possibleKickers
 
-    def getPossibleOnePairs(self, player):
+    def getPossibleOnePairs(self, player):#Possibility for double counting when two pair? 
 
         possibleOnePairs = []
 
@@ -159,16 +159,26 @@ class PokerStatter():
         return possibleOnePairs
 
     def getPossibleTwoPairs(self,player):
-        pass
-        # possibleTwoPairs = []
+        
+        possibleTwoPairs = []
 
-        # visibleCards = player.cards + self.allCardsDict["TableCards"]
+        pCard1 = player.cards[0]
+        pCard2 = player.cards[1]
 
-        # for card1 in visibleCards:
+        for c1 in self.allCards:
+            if c1.value == pCard1.value and c1.Id != pCard1.Id:
+                for c2 in self.allCards:
+                    if c2.value != c1.value and c2.value == pCard2.value and c2.Id != pCard2.Id:
+                        hand = Hand(name="twoPair",cards=[pCard1,c1,pCard2,c2],outsNeeded=[c1,c2], chance=0.1)
+                        print(hand.toString())
+
+        
+
+
         #     for c1 in self.allCards: 
         #         if card1.value == c1.value and card1.Id != c1.Id:
 
-        #             for card2 in visibleCards:
+        #             for card2 in player.cards:
         #                 if card2.Id != card1.Id and card2.value != card1.value:
         #                     for c2 in self.allCards:
         #                         if card2.value == c2.value and card2.Id != c2.Id:
@@ -180,10 +190,19 @@ class PokerStatter():
         #                                     )
 
         #                             possibleHand.chance = self.chanceOfTwoPair(player, possibleHand)
-                                    
-        #                             possibleTwoPairs.append(possibleHand)
+
+        #                             #make the results unique(remove hands where the same cards are used in another order)
+        #                             unique = True
+        #                             for hand in possibleTwoPairs:
+        #                                 if possibleHand.cards[0] in hand.cards and possibleHand.cards[1] in hand.cards and possibleHand.cards[2] in hand.cards and possibleHand.cards[3] in hand.cards:
+        #                                     unique = False
                                             
-        # return possibleTwoPairs
+        #                             if unique:
+        #                                 possibleTwoPairs.append(possibleHand)
+                                            
+        # for hand in possibleTwoPairs:
+        #     print(hand.toString())
+        return possibleTwoPairs
 
     def getPossibleTrips(self, player):
 
@@ -264,7 +283,7 @@ class PokerStatter():
         return totalChance
 
     def chanceOfTwoPair(self, playerId, hand):
-        pass
+        return 0.01
 
     def chanceOfTrips(self, playerId, hand):
         #outsNeeded list of cards that are needed to hit teh combination

@@ -3,106 +3,175 @@ from Entities.Suits import Suits
 from Entities.Card import Card
 from Entities.PokerStatter import PokerStatter
 from Entities.Printer import Printer
+from Entities.Hand import Hand
+from Entities.Suits import Suits
 
-t = Table(2)
+possibleHands = [] 
 
-testPlayerCards = [[3,19],[20,45]]
-testTableCards = [16,48,51,4,0]
+suits = [
+    Suits.Clubs,
+    Suits.Hearts,
+    Suits.Spades,
+    Suits.Diamonds
+]
 
-t.seed(testPlayerCards,testTableCards)
+for i in range(13):
+    # i = 2 
+    for suit1 in suits:
+        # H                                {2C 2S 2D}
+        pair1Card1 = Card(-1, _suit= suit1 , _value = i+2)
+        
+        #2H
+        for suit2 in suits:
+            if suit2 != suit1:
 
-t.nextBettingRound()
-#t.nextBettingRound()
+                pair1Card2 = Card(-1, _suit = suit2, _value = i+2)
+                
+                # 2S
 
-pr = Printer()
+                for j in range(13):
+                    if j != i:
+                        # 3
 
-print("\nPlayers:", end="\n\n")
-pr.printPlayers(t.players)
+                        for suit3 in suits:
+                            # H
+                            pair2Card1 = Card(-1, _suit = suit3, _value = j+2)
+                            
+                            # 3H
+                            for suit4 in suits:
+                                # C
+                                if suit3 != suit4:
+                                    pair2Card2 = Card(-1,_suit = suit4, _value = j+2)
+                                    
+                                    # 3C
+                                    # 
+                                    possibleHand = Hand(
+                                        name = "twoPair",
+                                        cards = [pair1Card1,pair1Card2,pair2Card1,pair2Card2],
+                                        chance = 0.01
+                                    )
 
-print("\nNot Exposed Table:", end="\n\n")
-pr.printTableCards(t.tableCards)
+                                    unique = True
 
-print("\nExposed Table:", end="\n\n")
-pr.printTableCardsExposed(t.tableCards)
+                                    # make the results unique(remove hands where the same cards are used in another order)
+                                    for hand in possibleHands:
+                                       if possibleHand.cards[0] in hand.cards and possibleHand.cards[1] in hand.cards and possibleHand.cards[2] in hand.cards and possibleHand.cards[3] in hand.cards:
+                                           unique = False
 
-p = PokerStatter()
+                                    if unique:
+                                        print(possibleHand.toString()) 
+                                        possibleHands.append(possibleHand)
 
-print("\nChances per Player:", end="\n\n")
-
-print(p.genChancePerPlayer(t.getAllCardsDict(), t.players))
-
-
-#chancesPerPlayer = 
-
-#for key in chancesPerPlayer:
-#    print(f"Player: {key} has {chancesPerPlayer[key]}% chance of winning")
-
-
-#for pi in range(len(t.players)):
-
-#    p = PokerStatter(t.getVisibleCards(pi))
-
-#chance = p.chanceOfOnePair(t.getAudienceVisibleCards())
-#print(f"\nChance of player {pi+1} getting 1 pair: {pr.printPercentChance(chance)}")
-# chanceOfOnePair
-# {"playerOneCards": [,]}
-# {"plasydfsfsdf", [,]}
-# ....
-# {"tableCards": [,,,,]}
-
-
-# P1 
-
-# one = 100
-# two = 0
-# trips = 4.5   
-# str = 0
-# flush 0
-# fullhouse 0
-# quds 0
-# strflush 0
-
-# 9
-
-# P2
-
-# one 100
-# two = 0
-# trips = 100
-# str = 0
-# flush = 0
-# fullhouse = 0
-# quds = 2.3
-# strflush = 0
+print("length of hands: " + str(len(possibleHands)))
 
 
-# 4.5/102.3
-
-
-# P1
-# AH 3D
-# AD AS AC 3H 3C 3S
-
-
-# [AH,AD]
-# 2.0000228283%
-
-# [AH,AS]
-# 2.0000228283%
+                                    
 
 
 
+# t = Table(2)
+
+# testPlayerCards = [[3,19],[20,45]]
+# testTableCards = [16,48,51,4,0]
+
+# t.seed(testPlayerCards,testTableCards)
+
+# t.nextBettingRound()
+# #t.nextBettingRound()
+
+# pr = Printer()
+
+# print("\nPlayers:", end="\n\n")
+# pr.printPlayers(t.players)
+
+# print("\nNot Exposed Table:", end="\n\n")
+# pr.printTableCards(t.tableCards)
+
+# print("\nExposed Table:", end="\n\n")
+# pr.printTableCardsExposed(t.tableCards)
+
+# p = PokerStatter()
+
+# print("\nChances per Player:", end="\n\n")
+
+# print(p.genChancePerPlayer(t.getAllCardsDict(), t.players))
+
+# Two pair anal-ysis:
+
+# p1 5h 8s
+
+# T ? ? ? ? ?
+
+
+# two one pairs from cards in hand: (eg. T = [5c, 8c, 3c, 10D, 12h])
+
+# twoPair: [5H,5C,8S,8H]
+# twoPair: [5H,5C,8S,8C]
+# twoPair: [5H,5C,8S,8D]
+
+# twoPair: [5H,5D,8S,8H]
+# twoPair: [5H,5D,8S,8C]
+# twoPair: [5H,5D,8S,8D]
+
+# twoPair: [5H,5S,8S,8H]
+# twoPair: [5H,5S,8S,8C]
+# twoPair: [5H,5S,8S,8D]
+
+
+# single one pair from hand and single one pair from table:  (eg. T = [5c, 3c, 3s, 10D, 12h])
+
+
+# twoPair: [2H,2S:3H,3C]
+# twoPair: [2H,2S:3H,3S]
+# twoPair: [2H,2S:3H,3D]
+
+# twoPair: [2H,2S:3D,3C]
+# twoPair: [2H,2S:3D,3S]
+# twoPair: [2H,2S:3D,3H]
 
 
 
-# P2 
-# 4 6
 
-# TableCards
-# none
-# flop
-# turn
-# river
+# twoPair: [2H,2S:3D,3H
+# twoPair: [2H,2S:3D,3C
 
+# twoPair: [2H,2S:3S,3D
+# twoPair: [2H,2S:3S,3H
+# twoPair: [2H,2S:3S,3C
 
 
+
+
+
+# twoPair: [5H,5S,2c,2h]
+# twoPair: [5H,5S,2c,2d]
+
+# twoPair: [5H,5S,2d,2h]
+# twoPair: [5H,5S,2d,2h]
+# twoPair: [5H,5S,2d,2h]
+
+
+
+
+
+
+
+# twoPair: [5H,5S, 2s ,52*52]
+# twoPair: [5H,5S, 2h ,52*52]
+# twoPair: [5H,5S, 2d- 2 ,52*52]
+# twoPair: [5H,5S, 52 - 2 ,52*52]
+# twoPair: [5H,5S, 52 - 2 ,52*52]
+# twoPair: [5H,5S, 52 - 2 ,52*52]
+
+# twoPair: [5H,5C,52,52]
+# twoPair: [5H,5D,52,52]
+
+# twoPair: [8S,8H,52,52]
+# twoPair: [8S,8D,52,52]
+# twoPair: [8S,8C,52,52]
+
+#13  3  12  3
+#13*12*3*3 = 1404
+#1404/22464 = 6.25%
+#3 5's 3 8's
+#3/48 * 3/47 * 42/46 * 41/45 * 40/44 * 20 =6.034% 
