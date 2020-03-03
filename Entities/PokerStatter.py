@@ -3,6 +3,7 @@ from Entities.Card import Card
 from Entities.Player import Player
 from Entities.HandEnum import handEnum
 from Entities.Hand import Hand
+import math
 import pprint
 
 class PokerStatter():
@@ -52,17 +53,29 @@ class PokerStatter():
 
         self.players = players
 
-        self.getPossibleWinningHands()
+        if self.tableCardsLeft == 5:
 
-        for p in self.players:
-            for h in p.possibleWinningHands:
-                p.cumulativeChance += h.chance * 100
+            for p in self.players:
 
-                print("Player: " + str(p.Id) + "     hand: " + h.toString()  + "    h.chance: " + str(h.chance) + "    cumulativeChance: " + str(p.cumulativeChance))
-            print("\n")
+                preFlopChances = self.getPreFlopChances(p)
 
-        for p in self.players:
-            chancesPerPlayer[p.Id] = p.cumulativeChance
+                for key in preFlopChances:
+                    p.cumulativeChance += preFlopChances[key]
+
+                chancesPerPlayer[p.Id] = p.cumulativeChance
+
+        else:
+            self.getPossibleWinningHands()
+
+            for p in self.players:
+                for h in p.possibleWinningHands:
+                    p.cumulativeChance += h.chance * 100
+
+                    print("Player: " + str(p.Id) + "     hand: " + h.toString()  + "    h.chance: " + str(h.chance) + "    cumulativeChance: " + str(p.cumulativeChance))
+                print("\n")
+
+            for p in self.players:
+                chancesPerPlayer[p.Id] = p.cumulativeChance
          
         return chancesPerPlayer
 
@@ -84,24 +97,28 @@ class PokerStatter():
             handsToCheck = []
             for key in p.possibleHands:
                 for hand in p.possibleHands[key]:
-                    if hand.chance != 0 and self.compareHands(hand, self.currentHighestHand) == 1 and self.checkForOpponentWin(p, hand) == False :
+                    if hand.chance != 0 and self.compareHands(hand, self.currentHighestHand) == 1 and self.checkForOpponentWin(p, hand) == False:
                         # need to find a way to check if the result would mean that another player 
                         # would have a higher hand
                         handsToCheck.append(hand)
 
             p.possibleWinningHands = handsToCheck
     
+    #endregion
+
+    #region preFlopChances methods
+
     #   Generates a dictionary of hands
     #   Expects:    player - the player object to use
     #   Returns:    dictionary with hand names as keys, 
     #               and lists of Hand Objects as values
-    def getAllPossibleHands(self, player):
+    def getPreFlopChances(self, player):
 
         chancesPerHand = {
         #    "highCard"  : self.getPossibleKickers(player), 
-            "onePair"   : self.getPossibleOnePairs(player),
-            "twoPair"   : self.getPossibleTwoPairs(player),
-            "trips"     : self.getPossibleTrips(player)
+            "onePair"   : self.onePairPreFlopChance(player)
+        #    "twoPair"   : self.twoPreFlopChance(player),
+        #    "trips"     : self.tripsPreFlopChance(player)
         #    "straight"  : self.getPossibleStraights(player)
         #    "flush"     : self.getPossibleFlushes(player)
         #    "fullhouse" : self.getPossibleFullHouses(player)
@@ -110,10 +127,60 @@ class PokerStatter():
         }
 
         return chancesPerHand
-    
+
+
+    def onePairPreFlopChance(self, player):
+
+        totalChance = 0
+
+        card1Val = player.cards[0].value
+        card2Val = player.cards[1].value
+        
+        if card1Val == card2Val:
+            return 1
+
+        rcc = float(52 - len(self.audienceCards))
+
+        for card in player.cards:
+            
+            rvc = self.remainCardsDict[card1Val]
+
+            totalChance +=  (3 * math.comb(11,4) * (4^(4))) + (3*math.comb(11,4)*4^(4))  /math.comb(50, 5)
+            # 3 is number of remaining valued card rvc
+            # 11C4 is cimbinations of other 11 cards
+            # eg AK
+            # rvcA = 3 and rvcK = 3
+            # (rvcA * math.comb(13-2,4) + rvcK * math.comb(13-2,4))/(math.comb(50,5))
+
+        return totalChance
+
+    def twoPairPreFlopChance(self, player):
+        pass
+
     #endregion
 
-    #region Get all possible hands methods
+    #region AllPossibleHands methods
+
+    #   Generates a dictionary of hands
+    #   Expects:    player - the player object to use
+    #   Returns:    dictionary with hand names as keys, 
+    #               and lists of Hand Objects as values
+    def getAllPossibleHands(self, player):
+
+        chancesPerHand = {
+            "highCard"  : self.getPossibleKickers(player), 
+            "onePair"   : self.getPossibleOnePairs(player),
+            "twoPair"   : self.getPossibleTwoPairs(player),
+            "trips"     : self.getPossibleTrips(player),
+            "straight"  : self.getPossibleStraights(player),
+            "flush"     : self.getPossibleFlushes(player),
+            "fullhouse" : self.getPossibleFullHouses(player),
+            "quads"     : self.getPossibleQuads(player),
+            "straightFlush" : self.getPossibleStraightFlushes(player)
+        }
+
+        return chancesPerHand
+
 
     def getPossibleKickers(self, player):
 
@@ -131,7 +198,7 @@ class PokerStatter():
 
         return possibleKickers
 
-    def getPossibleOnePairs(self, player):#Possibility for double counting when two pair? 
+    def getPossibleOnePairs(self, player): #Possibility for double counting when two pair? 
 
         possibleOnePairs = []
 
@@ -165,12 +232,35 @@ class PokerStatter():
         pCard1 = player.cards[0]
         pCard2 = player.cards[1]
 
-        for c1 in self.allCards:
-            if c1.value == pCard1.value and c1.Id != pCard1.Id:
-                for c2 in self.allCards:
-                    if c2.value != c1.value and c2.value == pCard2.value and c2.Id != pCard2.Id:
-                        hand = Hand(name="twoPair",cards=[pCard1,c1,pCard2,c2],outsNeeded=[c1,c2], chance=0.1)
-                        print(hand.toString())
+        if pCard1.value == pCard2.value:
+            for tCard in self.allCardsDict["TableCards"]:
+                
+                for card in self.allCards:
+                    if card.value == tCard.value and card.suit != tCard.suit:
+                        possibleTwoPairs.append(
+                            Hand(
+                                cards = [pCard1, pCard2, tCard, card],
+                                outsNeeded = [card]
+                            )
+                        )
+        else:
+            
+                
+
+
+
+        for pCard in player.cards:
+            for tCard in self.allCardsDict["TableCards"]:
+                if pCard.value == tCard.value:
+                    pass
+        return []
+
+        # for c1 in self.allCards:
+        #     if c1.value == pCard1.value and c1.Id != pCard1.Id:
+        #         for c2 in self.allCards:
+        #             if c2.value != c1.value and c2.value == pCard2.value and c2.Id != pCard2.Id:
+        #                 hand = Hand(name="twoPair",cards=[pCard1,c1,pCard2,c2],outsNeeded=[c1,c2], chance=0.1)
+        #                 print(hand.toString())
 
         
 
@@ -240,9 +330,24 @@ class PokerStatter():
 
         return possibleTrips
 
+    def getPossibleFlushes(self,player):
+        return []
+
+    def getPossibleStraights(self, player):
+        return []
+
+    def getPossibleFullHouses(self,player):
+        return []
+
+    def getPossibleQuads(self,player):
+        return []
+
+    def getPossibleStraightFlushes(self,player):
+        return []
+
     #endregion
 
-    #region Chance of hand calculation methods 
+    #region chanceOfHand methods
 
     #   All methods:
     #   Expect:    player: current player object

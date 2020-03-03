@@ -75,10 +75,16 @@ class Dealer():
 
         return tableSlots
 
-    def getCard(self, id):
-        for card in self.deck:
-            if card.Id == id:
-                return card
+    def getCard(self, id = None, suit = None, value = None):
+
+        if id == None:
+            for card in self.deck:
+                if card.value == value and card.suit == suit:
+                    return card
+        else:
+            for card in self.deck:
+                if card.Id == id:
+                    return card
 
 
 
