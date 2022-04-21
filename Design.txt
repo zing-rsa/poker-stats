@@ -5,6 +5,27 @@
 #Split 8% -> 6% (chance nobody has hightest cards)
 # flop 2D AH 6H
 
+Latest approach:
+
+broken down to one player, on one hand, looking for a one pair:
+  find what hands he can get to win 
+    loop hands
+        one pair
+          chance of the person getting a one pair * the chance of the opponent getting anything less than a competing one pair
+            choose all the ways I can hit a one pair * all the ways I can pick without hitting anything else 
+            *
+            all the ways my opponent gets a one pair that is has lower values than mine * all the ways my opponent can pick without hitting anything else
+            5h, 4s
+            getAmountLeftOfValue 5h: 3, 4s: 3
+            cardsLeftOver choose 3 * 
+            
+    
+    
+
+
+
+
+
 
 Required lists of cards:
     Table cards - 5 cards on the table
@@ -228,7 +249,7 @@ Overall approach:
  
     Dealer generates deck
     Dealer deals cards
-    determind probs of winning
+    determine probs of winning
         Loop through each player
         Create list of playable cards from that player (cards a player can see)   
         Get all "invisible" cards
@@ -543,3 +564,86 @@ xCy = x!/(y!(x-y)!)
 1/48 * 1/47 * 45/46 * 44/45 * 43/44  * 20 = P(hit trips in the game with 5H and 5D given we have 5c) = 0.00828707 = 0.828% * 3 = 2.5% 
 
 
+
+ Two pair anal-ysis:
+
+ p1 5h 8s
+
+ T 3c 10d 4h ? ?
+
+ if no cards in flop give you pair, 
+ then you have to hit both of your hand cards on the turn and river
+
+ one pair in your hand: look for the possible one pairs you could get on the table
+
+
+
+ two one pairs from cards in hand: (eg. T = [5c, 8c, 3c, 10D, 12h])
+
+ twoPair: [5H,5C,8S,8H]
+ twoPair: [5H,5C,8S,8C]
+ twoPair: [5H,5C,8S,8D]
+
+ twoPair: [5H,5D,8S,8H]
+ twoPair: [5H,5D,8S,8C]
+ twoPair: [5H,5D,8S,8D]
+
+ twoPair: [5H,5S,8S,8H]
+ twoPair: [5H,5S,8S,8C]
+ twoPair: [5H,5S,8S,8D]
+
+
+ single one pair from hand and single one pair from table:  (eg. T = [5c, 3c, 3s, 10D, 12h])
+
+
+ twoPair: [2H,2S:3H,3C]
+ twoPair: [2H,2S:3H,3S]
+ twoPair: [2H,2S:3H,3D]
+
+ twoPair: [2H,2S:3D,3C]
+ twoPair: [2H,2S:3D,3S]
+ twoPair: [2H,2S:3D,3H]
+
+
+
+
+ twoPair: [2H,2S:3D,3H
+ twoPair: [2H,2S:3D,3C
+
+ twoPair: [2H,2S:3S,3D
+ twoPair: [2H,2S:3S,3H
+ twoPair: [2H,2S:3S,3C
+
+
+ twoPair: [5H,5S,2c,2h]
+ twoPair: [5H,5S,2c,2d]
+
+ twoPair: [5H,5S,2d,2h]
+ twoPair: [5H,5S,2d,2h]
+ twoPair: [5H,5S,2d,2h]
+
+ twoPair: [5H,5S, 2s ,52*52]
+ twoPair: [5H,5S, 2h ,52*52]
+ twoPair: [5H,5S, 2d- 2 ,52*52]
+ twoPair: [5H,5S, 52 - 2 ,52*52]
+ twoPair: [5H,5S, 52 - 2 ,52*52]
+ twoPair: [5H,5S, 52 - 2 ,52*52]
+
+ twoPair: [5H,5C,52,52]
+ twoPair: [5H,5D,52,52]
+
+ twoPair: [8S,8H,52,52]
+ twoPair: [8S,8D,52,52]
+ twoPair: [8S,8C,52,52]
+
+13  3  12  3
+13*12*3*3 = 1404
+1404/22464 = 6.25%
+3 5's 3 8's
+3/48 * 3/47 * 42/46 * 41/45 * 40/44 * 20 =6.034% 
+
+ we are going to need this
+ math.comb(n, k)¶
+ Return the number of ways to choose k items from n items without repetition and without order.
+ Evaluates to n! / (k! * (n - k)!) when k <= n and evaluates to zero when k > n.
+ math.comb(n, k) = n! / (k! * (n-  k)!)

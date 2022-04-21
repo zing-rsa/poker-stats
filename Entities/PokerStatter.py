@@ -3,8 +3,10 @@ from Entities.Card import Card
 from Entities.Player import Player
 from Entities.HandEnum import handEnum
 from Entities.Hand import Hand
+from Entities.combination import combination
 import math
 import pprint
+
 
 class PokerStatter():
 
@@ -62,7 +64,7 @@ class PokerStatter():
                 for key in preFlopChances:
                     p.cumulativeChance += preFlopChances[key]
 
-                chancesPerPlayer[p.Id] = p.cumulativeChance
+                chancesPerPlayer[p.Id] = p.cumulativeChance * 100
 
         else:
             self.getPossibleWinningHands()
@@ -75,7 +77,7 @@ class PokerStatter():
                 print("\n")
 
             for p in self.players:
-                chancesPerPlayer[p.Id] = p.cumulativeChance
+                chancesPerPlayer[p.Id] = p.cumulativeChance * 100
          
         return chancesPerPlayer
 
@@ -130,7 +132,7 @@ class PokerStatter():
 
 
     def onePairPreFlopChance(self, player):
-
+        c = combination()
         totalChance = 0
 
         card1Val = player.cards[0].value
@@ -139,19 +141,27 @@ class PokerStatter():
         if card1Val == card2Val:
             return 1
 
-        rcc = float(52 - len(self.audienceCards))
+        rcc = 52 - len(self.audienceCards)
 
-        for card in player.cards:
+        #for card in player.cards:
             
-            rvc = self.remainCardsDict[card1Val]
+        rvc1 = self.remainCardsDict[card1Val]
+        rvc2 = self.remainCardsDict[card2Val]
 
-            totalChance +=  (3 * math.comb(11,4) * (4^(4))) + (3*math.comb(11,4)*4^(4))  /math.comb(50, 5)
-            # 3 is number of remaining valued card rvc
+        print('player: ' + str(player.Id))
+        print(f"rvc1: {rvc1}, rvc2: {rvc2}, rcc: {rcc}")
+        # totalChance of a 1 Pair = P(1st card, not second, no table pair) + P(not 1st card, 2nd card, no table pair) + P(not 1st card, not 2nd, table pair)
+        # (3C1 * 11C4 * (4C1 ^ 4) + 3C1 * 11C4 * (4C1 ^ 4) + 11C1 * 4C2 * 10C3 * (4C1 ^ 3)) / (50C5)
+        
+        totalChance +=  float((c.comb(rvc1, 1) * c.comb(11, 4) * ((c.comb(4,1))^4) + 
+                        c.comb(rvc2, 1) * c.comb(11, 4) * ((c.comb(4,1))^4) + 
+                        c.comb(11,1) * c.comb(4,2) * c.comb(10,3) * (c.comb(4,1))^3)/(c.comb(rcc,5)))   
+        # 3 is number of remaining valued card rvc
             # 11C4 is cimbinations of other 11 cards
             # eg AK
             # rvcA = 3 and rvcK = 3
             # (rvcA * math.comb(13-2,4) + rvcK * math.comb(13-2,4))/(math.comb(50,5))
-
+        print("total chance:", totalChance)
         return totalChance
 
     def twoPairPreFlopChance(self, player):
@@ -245,7 +255,7 @@ class PokerStatter():
                         )
         else:
             
-                
+            pass  
 
 
 
