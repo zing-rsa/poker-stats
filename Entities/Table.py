@@ -9,6 +9,7 @@ class Table():
     slots = [None] * 5
     state = "preflop"
     deck = []
+    cardsToFlip = 5
 
     def __init__(self, playerCount):
         for i in range(playerCount):
@@ -17,7 +18,7 @@ class Table():
 
         _id = 0
         for i in range(2, 15):
-            for j in range(3):
+            for j in range(4):
                 self.deck.append(Card(_id, i, suitMap[j]))
                 _id = _id + 1
 

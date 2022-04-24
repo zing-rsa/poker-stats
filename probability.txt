@@ -1,7 +1,0 @@
-prob of getting a one pair in 5 cards:
-p(get a one pair) * p(get nothing else)
-p(get two cards of same value)
-13 values
-4 Suits
-13c1*4c2 * p(get nothing else)
-13c1*4c2 * 12c3*4c3?

@@ -27,16 +27,14 @@ class Dealer():
                 table.slots[i].visible = True
                 table.removeFromDeck(table.slots[i].card)
             table.state = "flop"
+            table.cardsToFlip = 2
         elif table.state == "flop":
             table.slots[3].visible = True
             table.removeFromDeck(table.slots[3].card)
+            table.cardsToFlip = 1
             table.state = "turn"
         elif table.state == "turn":
             table.slots[4].visible = True
             table.removeFromDeck(table.slots[4].card)
+            table.cardsToFlip = 0
             table.state = "river"
-
-
-
-                
-        
