@@ -1,5 +1,5 @@
 from Entities.Suits import Suits
-from Entities.Kicker import KickerEnum
+from Entities.maps import valueMap
 
 class Card():
 
@@ -13,7 +13,7 @@ class Card():
         self.suit = _suit
     
     def toString(self):
-        return f"{str(KickerEnum(self.value-1).name).replace('_','')} of {self.suit.name}"
+        return f"{valueMap(self.value)} of {self.suit.name}"
 
     def toShortString(self):
         return f"{str(self.value)}{str(self.suit.name)[0]}"
