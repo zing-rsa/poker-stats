@@ -13,32 +13,25 @@ class PokerStatter():
     
     def evaluate(self, table):
 
-        # getAllPossibleHands()
+        # assignPossibleHands()
         # assignHandChances()
-        # isolatedHandChances()
+        # isolateHandChances()
         # generateOutcomes()
         # assignPlayerChances()
         
         pass
-    
+
     def assignPossibleHands(self,table):
         for p in table.players:
-            p.possibleHands = self.getPossibleHands(p)
-    
-    def getPossibleHands(self, player):
-        possibleHands = []
-
-        possibleHands = possibleHands + self.possibleOnePairs(p)
-        possibleHands = possibleHands + self.possibleTwoPairs(p)
-        possibleHands = possibleHands + self.possibleTrips(p)
-        possibleHands = possibleHands + self.possibleStrights(p)
-        possibleHands = possibleHands + self.possibleFlush(p)
-        possibleHands = possibleHands + self.possibleFullHouses(p)
-        possibleHands = possibleHands + self.possibleQuads(p)
-        possibleHands = possibleHands + self.possibleStraightFlushes(p)
-        possibleHands = possibleHands + self.possibleRoyalFlushes(p)
-
-        return possibleHands
+            p.possibleHands = p.possibleHands + self.possibleOnePairs(p)
+            p.possibleHands = p.possibleHands + self.possibleTwoPairs(p)
+            p.possibleHands = p.possibleHands + self.possibleTrips(p)
+            p.possibleHands = p.possibleHands + self.possibleStrights(p)
+            p.possibleHands = p.possibleHands + self.possibleFlush(p)
+            p.possibleHands = p.possibleHands + self.possibleFullHouses(p)
+            p.possibleHands = p.possibleHands + self.possibleQuads(p)
+            p.possibleHands = p.possibleHands + self.possibleStraightFlushes(p)
+            p.possibleHands = p.possibleHands + self.possibleRoyalFlushes(p)
 
     def assignHandChances(self, table):
         

@@ -29,8 +29,10 @@ print("\nPlayers: \n")
 print(t.playersToString())
 
 print("\nTable: \n")
-print(t.tableCardsExposedToString())
+print(t.tableCardsToString())
 
 p = PokerStatter()
+
+# p.evaluate(t)
 
 
