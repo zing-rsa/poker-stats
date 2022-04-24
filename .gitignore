@@ -2,4 +2,5 @@
 *.pyc
 
 #ignore vscode launch
+/.vscode
 launch.json
