@@ -6,7 +6,7 @@ from Entities.Hand import Hand
 from Entities.Suits import Suits
 from Entities.Dealer import Dealer
 
-s = {
+seed = {
     "playerCards":  [
         [Card(0, 12, Suits.Clubs),Card(1, 11, Suits.Diamonds)],
         [Card(2, 3, Suits.Hearts),Card(3, 4, Suits.Diamonds)]
@@ -23,7 +23,7 @@ s = {
 t = Table(2)
 d = Dealer()
 
-d.deal(t, s)
+d.deal(t, seed)
 
 print("\nPlayers: \n")
 print(t.playersToString())
