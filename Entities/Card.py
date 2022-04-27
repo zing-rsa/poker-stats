@@ -1,5 +1,5 @@
-from Entities.Suits import Suits
-from Entities.maps import valueMap
+from entities.suits import Suits
+from util import valueMap
 
 class Card():
 

@@ -1,4 +1,4 @@
-from Entities.Suits import Suits
+from entities.suits import Suits
 
 def valueMap(value):
     if value <= 10:

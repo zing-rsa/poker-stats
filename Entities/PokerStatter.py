@@ -1,12 +1,9 @@
-from Entities.Suits import Suits
-from Entities.Card import Card
-from Entities.Player import Player
-from Entities.HandEnum import handEnum
-from Entities.Hand import Hand
-import math
-import pprint
+from entities.suits import Suits
+from entities.card import Card
+from entities.player import Player
+from entities.hand import Hand, Hands
 
-class PokerStatter():
+class Pokerstatter():
     
     def __init__(self):
         pass
@@ -81,4 +78,8 @@ class PokerStatter():
             for outcome in p.outcomes:
                 chance = chance + outcome.chance # TODO: create outcome object
             p.chance = chance
-        
+    
+
+    def possibleOnePairs(player):
+        pass
+         

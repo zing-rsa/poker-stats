@@ -1,10 +1,4 @@
-from Entities.Table import Table
-from Entities.Suits import Suits
-from Entities.Card import Card
-from Entities.PokerStatter import PokerStatter
-from Entities.Hand import Hand
-from Entities.Suits import Suits
-from Entities.Dealer import Dealer
+from entities import Table, Suits, Card, Pokerstatter, Suits, Dealer
 
 seed = {
     "playerCards":  [
@@ -31,7 +25,7 @@ print(t.playersToString())
 print("\nTable: \n")
 print(t.tableCardsToString())
 
-p = PokerStatter()
+p = Pokerstatter()
 
 # p.evaluate(t)
 

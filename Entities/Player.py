@@ -1,5 +1,4 @@
-from Entities.HandEnum import handEnum
-from Entities.Hand import Hand
+from entities.hand import Hands, Hand
 
 class Player():
 

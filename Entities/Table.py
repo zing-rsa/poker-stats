@@ -1,8 +1,13 @@
-from Entities.Player import Player
-from Entities.Dealer import Dealer
-from Entities.TableSlot import TableSlot
-from Entities.maps import suitMap
-from Entities.Card import Card
+from entities.player import Player
+from entities.card import Card
+from util import suitMap
+
+class TableSlot():
+
+    def __init__(self, slotId, visible, card):
+        self.slotId = slotId
+        self.visible = visible
+        self.card = card
 
 class Table():
     players = []
@@ -57,5 +62,3 @@ class Table():
             out = out + newline + '(' + p.toString() + ')'
             newline = '\n'
         return out
-
-

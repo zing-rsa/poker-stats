@@ -1,9 +1,7 @@
 
-from Entities.Suits import Suits
-from Entities.TableSlot import TableSlot
-from Entities.Card import Card
-import math
-import random
+from entities.suits import Suits
+from entities.table import TableSlot
+from entities.card import Card
 
 class Dealer():
 
