@@ -13,7 +13,7 @@ class Card():
         self.suit = _suit
     
     def toString(self):
-        return f"{valueMap(self.value)} of {self.suit.name}"
+        return f"{valueMap[self.value]} of {self.suit.name}"
 
     def toShortString(self):
         return f"{str(self.value)}{str(self.suit.name)[0]}"
