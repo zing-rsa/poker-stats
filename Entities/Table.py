@@ -21,11 +21,9 @@ class Table():
             p = Player(i)
             self.players.append(p)
 
-        _id = 0
         for i in range(2, 15):
             for j in range(4):
-                self.deck.append(Card(_id, i, suitMap[j]))
-                _id = _id + 1
+                self.deck.append(Card(i, suitMap[j]))
 
     def removeFromDeck(self, card):
         idxs = []

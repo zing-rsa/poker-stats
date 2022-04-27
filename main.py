@@ -2,15 +2,15 @@ from entities import Table, Suits, Card, Pokerstatter, Suits, Dealer
 
 s = {
     "playerCards":  [
-        [Card(0, 12, Suits.Clubs),Card(1, 11, Suits.Diamonds)],
-        [Card(2, 3, Suits.Hearts),Card(3, 4, Suits.Diamonds)]
+        [Card(12, Suits.Clubs),Card(12, Suits.Diamonds)],
+        [Card(3, Suits.Hearts),Card(4, Suits.Diamonds)]
     ],
     "tableCards": [
-        Card(4, 8, Suits.Diamonds),
-        Card(5, 6, Suits.Clubs),
-        Card(6, 14, Suits.Diamonds),
-        Card(7, 2, Suits.Clubs),
-        Card(8, 13, Suits.Spades)
+        Card(8, Suits.Diamonds),
+        Card(6, Suits.Clubs),
+        Card(14, Suits.Diamonds),
+        Card(2, Suits.Clubs),
+        Card(13, Suits.Spades)
     ]
 }
 
@@ -27,6 +27,6 @@ print(t.tableCardsToString())
 
 p = Pokerstatter()
 
-# p.evaluate(t)
+p.evaluate(t)
 
 

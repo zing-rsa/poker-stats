@@ -2,15 +2,14 @@ from entities.suits import Suits
 from util import valueMap
 
 class Card():
+    
+    counter = 0
 
-    Id = -1
-    value = -1
-    suit = Suits.Undefined
-
-    def __init__(self, _id, _value, _suit):
-        self.Id = _id
+    def __init__(self, _value, _suit):
         self.value = _value
         self.suit = _suit
+        self.id = Card.counter
+        Card.counter += 1
     
     def toString(self):
         return f"{valueMap[self.value]} of {self.suit.name}"
