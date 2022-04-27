@@ -1,6 +1,6 @@
 from entities import Table, Suits, Card, Pokerstatter, Suits, Dealer
 
-seed = {
+s = {
     "playerCards":  [
         [Card(0, 12, Suits.Clubs),Card(1, 11, Suits.Diamonds)],
         [Card(2, 3, Suits.Hearts),Card(3, 4, Suits.Diamonds)]
@@ -14,10 +14,10 @@ seed = {
     ]
 }
 
-t = Table(2)
+t = Table(playerCount=2)
 d = Dealer()
 
-d.deal(t, seed)
+d.deal(table=t, seed=s)
 
 print("\nPlayers: \n")
 print(t.playersToString())
