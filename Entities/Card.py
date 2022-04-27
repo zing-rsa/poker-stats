@@ -2,7 +2,7 @@ from entities.suits import Suits
 from util import valueMap
 
 class Card():
-    
+
     counter = 0
 
     def __init__(self, _value, _suit):

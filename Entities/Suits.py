@@ -5,4 +5,3 @@ class Suits(enum.Enum):
     Spades = 2
     Clubs  = 3
     Diamonds = 4
-    Undefined = 5

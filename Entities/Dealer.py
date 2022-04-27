@@ -26,21 +26,21 @@ class Dealer():
             for i in range(3):
                 table.slots[i].visible = True
                 for p in table.players:
-                    p.visibleCards = p.visibleCards + table.slots[i].card
+                    p.visibleCards += [table.slots[i].card]
                 table.removeFromDeck(table.slots[i].card)
             table.state = "flop"
             table.cardsToFlip = 2
         elif table.state == "flop":
             table.slots[3].visible = True
             for p in table.players:
-                p.visibleCards = p.visibleCards + table.slots[i].card
+                p.visibleCards += [table.slots[i].card]
             table.removeFromDeck(table.slots[3].card)
             table.cardsToFlip = 1
             table.state = "turn"
         elif table.state == "turn":
             table.slots[4].visible = True
             for p in table.players:
-                    p.visibleCards = p.visibleCards + table.slots[i].card
+                    p.visibleCards += [table.slots[i].card]
             table.removeFromDeck(table.slots[4].card)
             table.cardsToFlip = 0
             table.state = "river"

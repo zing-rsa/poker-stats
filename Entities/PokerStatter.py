@@ -97,7 +97,6 @@ class Pokerstatter():
         print('nothing')
 
     def possibleOnePairs(self, player):
-        # do we include the table one pairs or just the one pairs for our player?
 
         onepairs = []
 
@@ -115,37 +114,121 @@ class Pokerstatter():
         return onepairs
 
     def possibleTwoPairs(self, player):
-        #twopairs = []
-        #
-        # for i in range(4):
-        #    if suitMap[i] != player.cards[0].suit:
-        #        for j in range(4):
-        #            if suitMap[j] != player.cards[1].suit:
-        #                outs = [
-        #                    Card(player.cards[0].value, suitMap[i]),
-        #                    Card(player.cards[1].value, suitMap[j])
-        #                ]
-        #
-        #                twopairs.append(Hand(
-        #                    name=Hands.twoPair,
-        #                    cards=[
-        #                        player.cards[0],
-        #                        outs[0],
-        #                        player.cards[1],
-        #                        outs[1]
-        #                    ],
-        #                    chance=None,
-        #                    outs=outs
-        #                ))
+        twopairs = []
+        
+        for c, card in enumerate(player.visibleCards):
+            nextCard = player.visibleCards[(c+1) % len(player.visibleCards)]
+            for i in range(4):
+               if suitMap[i] != card.suit:
+                   for j in range(4):
+                       if suitMap[j] != nextCard.suit:
+                           outs = [
+                               Card(card.value, suitMap[i]),
+                               Card(nextCard.value, suitMap[j])
+                           ]
 
-        # return twopairs
+                           twopairs.append(Hand(
+                               name=Hands.twoPair,
+                               cards=[
+                                   card,
+                                   outs[0],
+                                   nextCard,
+                                   outs[1]
+                               ],
+                               chance=None,
+                               outs=outs
+                           ))
 
-        # what if we get two of the same value?
-
-        return []
+        return twopairs
 
     def possibleTrips(self, player):
-        return []
+        trips = []
+        alreadyCalculated = []
+
+        for card in player.visibleCards:
+            tableMatches = [c for c in player.visibleCards if c.value == card.value and c.suit != card.suit]
+
+            if len(tableMatches) == 0:
+                otherSuits = [suit for suit in Suits if suit != card.suit]
+
+                trips += [
+                    Hand(
+                       name=Hands.trips,
+                       cards=[
+                           card,
+                           Card(card.value, otherSuits[0]),
+                           Card(card.value, otherSuits[1])
+                       ],
+                       chance=None,
+                       outs=[
+                           Card(card.value, otherSuits[0]),
+                           Card(card.value, otherSuits[1])
+                       ]
+                    ),
+                    Hand(
+                        name=Hands.trips,
+                        cards=[
+                            card,
+                            Card(card.value, otherSuits[0]),
+                            Card(card.value, otherSuits[2])
+                        ],
+                        chance=None,
+                        outs=[
+                            Card(card.value, otherSuits[0]),
+                            Card(card.value, otherSuits[2])
+                        ]
+                    ),
+                    Hand(name=Hands.trips,
+                       cards=[
+                           card,
+                           Card(card.value, otherSuits[1]),
+                           Card(card.value, otherSuits[2])
+                       ],
+                       chance=None,
+                       outs=[
+                           Card(card.value, otherSuits[1]),
+                           Card(card.value, otherSuits[2])
+                       ]
+                    )
+                ]
+            elif len(tableMatches) > 0:
+                if card.value not in alreadyCalculated:
+                    alreadyCalculated.append(card.value)
+                    otherSuits = [suit for suit in Suits if suit not in [card.suit,tableMatches[0].suit]]
+
+                    outs = [
+                        Card(card.value, otherSuits[0]),
+                        Card(card.value, otherSuits[1])
+                    ]
+                    trips += [
+                        Hand(
+                            name=Hands.trips,
+                            cards=[
+                                card,
+                                tableMatches[0],
+                                outs[0]
+                            ],
+                            chance=None,
+                            outs=[
+                                outs[0]
+                            ]
+                        ),
+                        Hand(
+                            name=Hands.trips,
+                            cards=[
+                                card,
+                                tableMatches[0],
+                                outs[1]
+                            ],
+                            chance=None,
+                            outs=[
+                                outs[1]
+                            ]
+                        )
+                    ]
+
+        #print(':'.join(h.cardsString for h in trips))
+        return trips
 
     def possibleStraights(self, player):
         return []
