@@ -18,7 +18,6 @@ t = Table(playerCount=2)
 d = Dealer()
 
 d.deal(table=t, seed=s)
-d.flip(table=t)
 
 print("\nPlayers: \n")
 print(t.playersToString())
@@ -29,5 +28,7 @@ print(t.tableCardsToString())
 p = Pokerstatter()
 
 p.evaluate(t)
+
+print(p.counter)
 
 

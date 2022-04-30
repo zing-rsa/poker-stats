@@ -1,23 +1,20 @@
 import enum
 from functools import total_ordering
 
-
 class Hand():
 
    counter = 0
 
    def __init__(self, name, cards, chance, outs):
         self.name = name
-        self.chance = chance
-        self.outs = outs
         self.cards = sorted(cards,key=lambda c: c.toShortString())
-        self.cardsString = ','.join([c.toShortString() for c in self.cards])
+        self.cardstr = ','.join([c.toShortString() for c in self.cards])
         self.id = Hand.counter
         Hand.counter += 1
 
    def toString(self):
 
-      outstring = self.name + ": ["
+      outstring = self.name + ": [" 
       comma = ""
 
       for c in self.cards:

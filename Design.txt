@@ -1,32 +1,6 @@
-Table is state object
- - players
- - player cards
- - table cards
-
-Dealer interacts with table
- - deals cards
- - gets new random cards
-
-
-
-getunusedcards, getaudiencecards, etc.?
-
-
-
-main
-create table
-create Dealer
-
-table.player1.cards = dealer.getcards2
-table.player2.cards = dealer.getcards2
-table.tablecards = dealer.getcards5
-
-pokerstatter.getprobs(table)
-
-table.tablecards3 = dealer.getcards1
-
-pokerstatter.getprobs(table)
-
-table.tablecards4 = dealer.getcards1
-
-pokerstatter.getprobs(table)
+completeTable(deck, cardsToFlip):
+    if !len(cardstoflip):
+        getoutcomes
+    else
+        for card in deck:
+            completetable(deck, )
