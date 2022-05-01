@@ -1,14 +1,18 @@
 import enum
+from util import handScores
 from functools import total_ordering
 
 class Hand():
 
    counter = 0
 
-   def __init__(self, name, cards, chance, outs):
+   def __init__(self, name, valueSum, owner=None, cards=None):
         self.name = name
         self.cards = sorted(cards,key=lambda c: c.toShortString())
         self.cardstr = ','.join([c.toShortString() for c in self.cards])
+        self.owner = owner
+        self.valueSum = valueSum
+        self.rank = valueSum + handScores[self.name.name]
         self.id = Hand.counter
         Hand.counter += 1
 
@@ -26,7 +30,6 @@ class Hand():
 
 @total_ordering
 class Hands(enum.Enum):
-   default = 0
    highCard = 1
    onePair = 2
    twoPair = 3

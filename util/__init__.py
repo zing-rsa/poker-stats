@@ -1,1 +1,1 @@
-from util.maps import valueMap, suitMap
+from util.maps import valueMap, suitMap, handScores

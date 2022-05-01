@@ -18,7 +18,7 @@ class Table():
 
     def __init__(self, playerCount):
         for i in range(playerCount):
-            p = Player(i)
+            p = Player()
             self.players.append(p)
 
         for i in range(2, 15):

@@ -2,8 +2,8 @@ from entities import Table, Suits, Card, Pokerstatter, Suits, Dealer
 
 s = {
     "playerCards":  [
-        [Card(2, Suits.Clubs),Card(12, Suits.Diamonds)],
-        [Card(3, Suits.Hearts),Card(4, Suits.Diamonds)]
+        [Card(2, Suits.Diamonds),Card(12, Suits.Diamonds)],
+        [Card(3, Suits.Hearts),Card(4, Suits.Clubs)]
     ],
     "tableCards": [
         Card(12, Suits.Clubs),
@@ -29,6 +29,7 @@ p = Pokerstatter()
 
 p.evaluate(t)
 
-print(p.counter)
+print("\nPlayers: \n")
+print(t.playersToString())
 
 

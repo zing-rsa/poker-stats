@@ -8,6 +8,7 @@ class Card():
     def __init__(self, _value, _suit):
         self.value = _value
         self.suit = _suit
+        self.str = str(self.value) + self.getSuitShort()
         self.id = Card.counter
         Card.counter += 1
     

@@ -22,3 +22,15 @@ suitMap = {
     2: Suits.Spades,
     3: Suits.Hearts
 }
+
+handScores = { 
+    "highCard": 0,
+    "onePair": 100,
+    "twoPair": 200,
+    "trips": 300,
+    "straight": 400,
+    "flush": 500,
+    "fullHouse": 600,
+    "quads": 700,
+    "straightFlush": 800
+}   
