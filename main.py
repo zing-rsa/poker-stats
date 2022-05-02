@@ -1,4 +1,5 @@
 from entities import Table, Suits, Card, Pokerstatter, Suits, Dealer
+import time
 
 s = {
     "playerCards":  [
@@ -27,7 +28,11 @@ print(t.tableCardsToString())
 
 p = Pokerstatter()
 
+start = time.time()
+print('\nBegin evaluate:')
 p.evaluate(t)
+end = time.time()
+print(f"Completed in {end - start}s")
 
 print("\nPlayers: \n")
 print(t.playersToString())

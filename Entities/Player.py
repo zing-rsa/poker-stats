@@ -13,4 +13,4 @@ class Player():
         Player.counter += 1
 
     def toString(self):
-        return f"Id: {self.id}, wins: {str(self.wins)}, tie chance: {str(self.ties)} Cards: {self.cards[0].toShortString()}, {self.cards[1].toShortString()}"
+        return f"Id: {self.id}, wins: {str(self.wins)}, tie chance: {str(self.ties)} Cards: [{self.cards[0].toShortString()}, {self.cards[1].toShortString()}]"
