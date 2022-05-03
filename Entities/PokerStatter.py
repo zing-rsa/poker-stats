@@ -42,7 +42,7 @@ class Pokerstatter():
 
         for i, player in enumerate(self.table.players):
 
-            evalCards = player.cards + tableCards
+            evalCards = sorted(player.cards + tableCards, key=lambda c: c.value)
 
             valueGroups = {}
             suitGroups = {}
@@ -56,8 +56,47 @@ class Pokerstatter():
                 else:
                     valueGroups[card.value] = [card]
             
+            #hand = self.getRoyal(evalCards, player)
+            #if hand:
+            #    playerHands += [hand]
+            #    continue
+            #
+            #hand = self.getStraightFlush(evalCards, player)
+            #if hand:
+            #    playerHands += [hand]
+            #    continue
+            
+            hand = self.getQuads(valueGroups, evalCards, player)
+            if hand:
+                playerHands += [hand]
+                continue
+            
+            hand = self.getFullHouse(valueGroups, player)
+            if hand:
+                playerHands += [hand]
+                continue
 
             hand = self.getFlush(suitGroups, player)
+            if hand:
+                playerHands += [hand]
+                continue
+            
+            hand = self.getStraight(evalCards, player)
+            if hand:
+                playerHands += [hand]
+                continue
+            
+            hand = self.getTrips(valueGroups, evalCards, player)
+            if hand:
+                playerHands += [hand]
+                continue
+            
+            hand = self.getTwoPair(valueGroups, evalCards, player)
+            if hand:
+                playerHands += [hand]
+                continue
+
+            hand = self.getOnePair(valueGroups, evalCards, player)
             if hand:
                 playerHands += [hand]
                 continue
@@ -76,23 +115,82 @@ class Pokerstatter():
                             p.ties += 1
         else:
             for p in self.table.players:
-                if p.id == hand.owner:
+                if p.id == winner.owner:
                     p.wins += 1
     
-    def isStraightFlush(self,cards):
+    def getRoyal(self, cards, player):
         pass
 
-    def isQuads(self,cards):
-        pass       
+    def getStraightFlush(self, cards, player):
+        cards = sorted(cards, key=lambda c: c.value, reverse=True)
 
-    def isFullHouse(self,cards):
-        pass    
+        if cards[0].value == 14:
+            cards = cards + [Card(1, cards[0].suit)]
+
+        seqCards = []
+        for c in cards:
+            if not seqCards or (seqCards[-1].value - c.value == 1 and seqCards[-1].suit == c.suit):
+                seqCards.append(c)
+            elif seqCards[-1].value - c.value > 1 or seqCards[-1].suit != c.suit:
+                seqCards = []
+
+            if seqCards[-1].value - c.value == 0:
+                pass
+                # Potential for 2 same values to be in sequence and the 
+                # suit check to fail even though the right card is present
+            
+            if len(seqCards) == 5:
+                if seqCards[-1].value == 1:
+                    seqCards[-1] = Card(14, seqCards[-1].suit)
+
+                return Hand(
+                    name=Hands.straight,
+                    valueSum=sum(c.value for c in seqCards),
+                    owner=player.id,
+                    cards=seqCards
+                )
+                break
+        return None
+
+    def getQuads(self, values, cards, player):
+        for key, val in values.items():
+            if len(val) == 4:
+                cards = val + [sorted([c for c in cards if c.value != key], key=lambda c: c.value, reverse=True)[0]]
+                return Hand(
+                    name=Hands.quads,
+                    valueSum=sum(c.value for c in cards),
+                    owner=player.id,
+                    cards=cards
+                )
+        return None
+
+    def getFullHouse(self, values, player):
+        trips = []
+        dubs = []
+        for key, val in values.items():
+            if len(val) == 3:
+                trips = val
+                break
+        for key, val in values.items():
+            if len(val) == 2:
+                dubs = val
+                #don't break incase there is a higher pair
+        if trips and dubs:
+            cards = trips + dubs
+            return Hand(
+                name=Hands.fullHouse,
+                valueSum=sum(c.value for c in cards),
+                owner=player.id,
+                cards=cards
+            )
+            
+        return None
 
     def getFlush(self, suits, player):
         hand = None
         for key, val in suits.items():
             if len(val) >= 5:
-                cards=sorted(val, key=lambda c: c.value, reverse=True)[0:4]
+                cards=sorted(val, key=lambda c: c.value, reverse=True)[:5]
                 return Hand(
                     name=Hands.flush,
                     valueSum=sum(c.value for c in cards),
@@ -102,21 +200,71 @@ class Pokerstatter():
 
         return None
 
+    def getStraight(self, cards, player):
+        cards = sorted(cards, key=lambda c: c.value, reverse=True)
 
-    def isStraight(self,cards):
-        pass    
+        if cards[0].value == 14:
+            cards = cards + [Card(1, cards[0].suit)]
 
-    def isTrips(self,cards):
-        pass    
+        seqCards = []
+        for c in cards:
+            if not seqCards or seqCards[-1].value - c.value == 1:
+                seqCards.append(c)
+            elif seqCards[-1].value - c.value > 1:
+                seqCards = []
+            
+            if len(seqCards) == 5:
+                if seqCards[-1].value == 1:
+                    seqCards[-1] = Card(14, seqCards[-1].suit)
 
-    def isTwoPair(self,cards):
-        pass    
+                return Hand(
+                    name=Hands.straight,
+                    valueSum=sum(c.value for c in seqCards),
+                    owner=player.id,
+                    cards=seqCards
+                )
+                break
+        return None
 
-    def isOnePair(self,cards):
-        pass    
+    def getTrips(self, values, cards, player):
+        for key, val in values.items():
+            if len(val) == 3:
+                cards = val + sorted([c for c in cards if c.value != key], key=lambda c: c.value, reverse=True)[:2]
+                return Hand(
+                    name=Hands.trips,
+                    valueSum=sum(c.value for c in cards),
+                    owner=player.id,
+                    cards=cards
+                )
+        return None
 
-    def getHighCard(self, _cards, player):
-        cards = sorted(_cards, key=lambda c: c.value, reverse=True)[0:4]
+    def getTwoPair(self, values, cards, player):
+        pairs = [v for k, v in values.items() if len(v) == 2]
+        if len(pairs) > 1:
+            highPairs = sorted(pairs, key=lambda p: p[0].value, reverse=True)[:2]
+            cards = highPairs[0] + highPairs[1] + [max([c for c in cards if c.value not in [highPairs[0][0].value, highPairs[1][0].value]], key=lambda c: c.value)]
+            return Hand(
+                name=Hands.twoPair,
+                valueSum=sum(c.value for c in cards),
+                owner=player.id,
+                cards=cards
+            )
+        return None
+
+    def getOnePair(self, values, cards, player):
+        for key, val in values.items():
+            if len(val) == 2:
+                cards = val + sorted([c for c in cards if c.value != key], key=lambda c: c.value, reverse=True)[:3]
+                return Hand(
+                    name=Hands.onePair,
+                    valueSum=sum(c.value for c in cards),
+                    owner=player.id,
+                    cards=cards
+                )
+        return None
+
+    def getHighCard(self, cards, player):
+        cards = cards[-5:]
         return Hand(
             name=Hands.highCard,
             valueSum=sum(c.value for c in cards),

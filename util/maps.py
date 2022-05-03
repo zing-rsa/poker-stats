@@ -1,6 +1,7 @@
 from entities.suits import Suits
 
 valueMap = {
+    1: 1,
     2: 2,
     3: 3,
     4: 4,
@@ -32,5 +33,6 @@ handScores = {
     "flush": 500,
     "fullHouse": 600,
     "quads": 700,
-    "straightFlush": 800
+    "straightFlush": 800,
+    "royalFlush": 900,
 }   
