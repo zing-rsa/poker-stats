@@ -56,15 +56,15 @@ class Pokerstatter():
                 else:
                     valueGroups[card.value] = [card]
             
-            #hand = self.getRoyal(evalCards, player)
-            #if hand:
-            #    playerHands += [hand]
-            #    continue
-            #
-            #hand = self.getStraightFlush(evalCards, player)
-            #if hand:
-            #    playerHands += [hand]
-            #    continue
+            hand = self.getRoyal(suitGroups, player)
+            if hand:
+                playerHands += [hand]
+                continue
+            
+            hand = self.getStraightFlush(suitGroups, player)
+            if hand:
+                playerHands += [hand]
+                continue
             
             hand = self.getQuads(valueGroups, evalCards, player)
             if hand:
@@ -118,39 +118,44 @@ class Pokerstatter():
                 if p.id == winner.owner:
                     p.wins += 1
     
-    def getRoyal(self, cards, player):
-        pass
-
-    def getStraightFlush(self, cards, player):
-        cards = sorted(cards, key=lambda c: c.value, reverse=True)
-
-        if cards[0].value == 14:
-            cards = cards + [Card(1, cards[0].suit)]
-
-        seqCards = []
-        for c in cards:
-            if not seqCards or (seqCards[-1].value - c.value == 1 and seqCards[-1].suit == c.suit):
-                seqCards.append(c)
-            elif seqCards[-1].value - c.value > 1 or seqCards[-1].suit != c.suit:
-                seqCards = []
-
-            if seqCards[-1].value - c.value == 0:
-                pass
-                # Potential for 2 same values to be in sequence and the 
-                # suit check to fail even though the right card is present
-            
-            if len(seqCards) == 5:
-                if seqCards[-1].value == 1:
-                    seqCards[-1] = Card(14, seqCards[-1].suit)
-
-                return Hand(
-                    name=Hands.straight,
-                    valueSum=sum(c.value for c in seqCards),
-                    owner=player.id,
-                    cards=seqCards
-                )
-                break
+    def getRoyal(self, suits, player):
+        straightFlush = self.getStraightFlush(suits, player)
+        if straightFlush and straightFlush.cards[-1].value == 10:
+            return Hand(
+                hands.royalFlush,
+                valueSum=sum(c.value for c in straightFlush.cards),
+                owner=player.id,
+                cards=straightFlush.cards
+            )
         return None
+
+    def getStraightFlush(self, suits, player):
+
+        for key, val in suits.items():
+            if len(val) >= 5:
+                cards = sorted(val, key=lambda c: c.value, reverse=True)
+
+                if cards[0].value == 14:
+                    cards = cards + [Card(1, cards[0].suit)]
+
+                seqCards = []
+                for c in cards:
+                    if not seqCards or seqCards[-1].value - c.value == 1:
+                        seqCards.append(c)
+                    elif seqCards[-1].value - c.value > 1:
+                        seqCards = [c]
+
+                    if len(seqCards) == 5:
+                        if seqCards[-1].value == 1:
+                            seqCards[-1] = Card(14, seqCards[-1].suit)
+
+                        return Hand(
+                            name=Hands.straight,
+                            valueSum=sum(c.value for c in seqCards),
+                            owner=player.id,
+                            cards=seqCards
+                        )
+            return None
 
     def getQuads(self, values, cards, player):
         for key, val in values.items():
@@ -211,7 +216,7 @@ class Pokerstatter():
             if not seqCards or seqCards[-1].value - c.value == 1:
                 seqCards.append(c)
             elif seqCards[-1].value - c.value > 1:
-                seqCards = []
+                seqCards = [c]
             
             if len(seqCards) == 5:
                 if seqCards[-1].value == 1:
@@ -223,7 +228,6 @@ class Pokerstatter():
                     owner=player.id,
                     cards=seqCards
                 )
-                break
         return None
 
     def getTrips(self, values, cards, player):

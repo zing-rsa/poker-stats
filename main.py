@@ -3,14 +3,14 @@ import time
 
 s = {
     "playerCards":  [
-        [Card(4, Suits.Diamonds),  Card(5, Suits.Diamonds)],
+        [Card(10, Suits.Diamonds),  Card(11, Suits.Diamonds)],
         [Card(2, Suits.Clubs),   Card(3, Suits.Clubs)]
     ],
     "tableCards": [
-        Card(3, Suits.Diamonds),
-        Card(5, Suits.Diamonds),
+        Card(12, Suits.Diamonds),
+        Card(13, Suits.Diamonds),
         Card(6, Suits.Diamonds),
-        Card(13, Suits.Clubs),
+        Card(4, Suits.Hearts),
         Card(13, Suits.Spades)
     ]
 }
