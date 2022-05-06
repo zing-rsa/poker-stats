@@ -57,6 +57,9 @@ class Table():
         out = ''
         newline = ''
         for p in self.players:
-            out = out + newline + '(' + p.toString() + ')'
+            out += newline + '(' + p.toString() + ')'
+            out += '\nHands:\n' + p.handsToString()
             newline = '\n'
         return out
+    
+    

@@ -3,14 +3,14 @@ import time
 
 s = {
     "playerCards":  [
-        [Card(10, Suits.Diamonds),  Card(11, Suits.Diamonds)],
-        [Card(2, Suits.Clubs),   Card(3, Suits.Clubs)]
+        [Card(14, Suits.Clubs),  Card(4, Suits.Spades)],
+        [Card(7, Suits.Clubs),   Card(5, Suits.Diamonds)]
     ],
     "tableCards": [
-        Card(12, Suits.Diamonds),
-        Card(13, Suits.Diamonds),
-        Card(6, Suits.Diamonds),
-        Card(4, Suits.Hearts),
+        Card(7, Suits.Diamonds),
+        Card(11, Suits.Diamonds),
+        Card(8, Suits.Spades),
+        Card(11, Suits.Hearts),
         Card(13, Suits.Spades)
     ]
 }
@@ -20,7 +20,6 @@ d = Dealer()
 
 d.deal(table=t, seed=s)
 
-d.flip(t)
 d.flip(t)
 
 print("\nPlayers: \n")

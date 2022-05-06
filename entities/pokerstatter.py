@@ -7,11 +7,8 @@ from util import valueMap, suitMap
 
 class Pokerstatter():
 
-    outcomes = []
-    counter = 0
-
     def __init__(self):
-        pass
+        self.counter = 0 
 
     def evaluate(self, table):
         for player in table.players:
@@ -22,6 +19,13 @@ class Pokerstatter():
         tablecards = [s.card for s in self.table.slots if s.visible]
 
         self.completeTable(tablecards, 0, 5 - len(tablecards))
+
+        for p in self.table.players:
+            p.wins = round(p.wins/self.counter * 100, 3)
+            p.ties = round(p.ties/self.counter * 100, 3)
+            for key, val in p.hands.items():
+                p.hands[key] = round(val/self.counter*100, 3)
+
 
     def completeTable(self, tableCards, previousIteration, cardsToFlip):
         if cardsToFlip:
@@ -35,7 +39,9 @@ class Pokerstatter():
                 newTableCards = [c for c in tableCards] + [card]
                 self.completeTable(newTableCards, i, cardsToFlip-1)
         else:
+            self.counter += 1
             self.processOutcomes(tableCards)
+
         
     def processOutcomes(self, tableCards):
         playerHands = []
@@ -107,16 +113,25 @@ class Pokerstatter():
         winner = max(playerHands, key=lambda h: h.rank)
 
         if len([h.rank for h in playerHands if h.rank == winner.rank]) > 1:
-            tie=True
             for hand in playerHands:
                 if hand.rank == winner.rank:
                     for p in self.table.players:
                         if p.id == hand.owner:
                             p.ties += 1
+
+                            if hand.name in p.hands:
+                                p.hands[hand.name] += 1
+                            else: 
+                                p.hands[hand.name] = 1
         else:
             for p in self.table.players:
                 if p.id == winner.owner:
                     p.wins += 1
+                    
+                    if hand.name in p.hands:
+                        p.hands[hand.name] += 1
+                    else: 
+                        p.hands[hand.name] = 1
     
     def getRoyal(self, suits, player):
         straightFlush = self.getStraightFlush(suits, player)
