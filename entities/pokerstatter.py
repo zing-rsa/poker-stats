@@ -120,9 +120,9 @@ class Pokerstatter():
     
     def getRoyal(self, suits, player):
         straightFlush = self.getStraightFlush(suits, player)
-        if straightFlush and straightFlush.cards[-1].value == 10:
+        if straightFlush and sorted(straightFlush.cards, key=lambda c: c.value)[0].value == 10:
             return Hand(
-                hands.royalFlush,
+                Hands.royalFlush,
                 valueSum=sum(c.value for c in straightFlush.cards),
                 owner=player.id,
                 cards=straightFlush.cards
@@ -155,7 +155,7 @@ class Pokerstatter():
                             owner=player.id,
                             cards=seqCards
                         )
-            return None
+        return None
 
     def getQuads(self, values, cards, player):
         for key, val in values.items():

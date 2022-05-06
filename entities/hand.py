@@ -39,7 +39,7 @@ class Hands(enum.Enum):
    fullHouse = 7
    quads = 8
    straightFlush = 9
-   RoyalFlush = 10
+   royalFlush = 10
 
    def __lt__(self, other):
       if self.__class__ is other.__class__:
