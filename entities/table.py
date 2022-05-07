@@ -2,12 +2,14 @@ from entities.player import Player
 from entities.card import Card
 from util import suitMap
 
+
 class TableSlot():
 
     def __init__(self, slotId, visible, card):
         self.slotId = slotId
         self.visible = visible
         self.card = card
+
 
 class Table():
     players = []
@@ -36,16 +38,16 @@ class Table():
         out = ''
         space = ''
         for s in self.slots:
-            out = out + space + s.card.toShortString()
+            out = out + space + s.card.str
             space = ' '
         return out
-    
+
     def tableCardsToString(self):
         out = ''
         space = ''
         for s in self.slots:
             if s.visible:
-                out = out + space + s.card.toShortString()
+                out = out + space + s.card.str
                 space = ' '
             else:
                 out = out + space + "[]"
@@ -61,5 +63,3 @@ class Table():
             out += '\nHands:\n' + p.handsToString()
             newline = '\n'
         return out
-    
-    

@@ -24,7 +24,7 @@ suitMap = {
     3: Suits.Hearts
 }
 
-handScores = { 
+handScores = {
     "highCard": 0,
     "onePair": 100,
     "twoPair": 200,
@@ -35,4 +35,4 @@ handScores = {
     "quads": 700,
     "straightFlush": 800,
     "royalFlush": 900,
-}   
+}

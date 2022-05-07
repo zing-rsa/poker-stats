@@ -3,12 +3,12 @@ import time
 
 s = {
     "playerCards":  [
-        [Card(14, Suits.Clubs),  Card(4, Suits.Spades)],
-        [Card(7, Suits.Clubs),   Card(5, Suits.Diamonds)]
+        [Card(2, Suits.Diamonds),  Card(6, Suits.Hearts)],
+        [Card(2, Suits.Clubs),   Card(3, Suits.Spades)]
     ],
     "tableCards": [
-        Card(7, Suits.Diamonds),
-        Card(11, Suits.Diamonds),
+        Card(8, Suits.Diamonds),
+        Card(5, Suits.Diamonds),
         Card(8, Suits.Spades),
         Card(11, Suits.Hearts),
         Card(13, Suits.Spades)
@@ -40,5 +40,3 @@ print(f"Completed in {end - start}s")
 
 print("\nPlayers: \n")
 print(t.playersToString())
-
-
