@@ -2,8 +2,7 @@ from entities.suits import Suits
 from entities.card import Card
 from entities.player import Player
 from entities.hand import Hand, Hands
-from util import valueMap, suitMap
-
+from util import valueMap
 
 class Pokerstatter():
 
@@ -21,10 +20,13 @@ class Pokerstatter():
         self.completeTable(tablecards, 0, 5 - len(tablecards))
 
         for p in self.table.players:
+
+            # for key, val in p.hands.items():
+            #     p.hands[key] = round(val/(p.wins+p.ties)*100, 3)
+            # this needs to be done even when the player doesn't win or tie
+
             p.wins = round(p.wins/self.counter * 100, 3)
             p.ties = round(p.ties/self.counter * 100, 3)
-            for key, val in p.hands.items():
-                p.hands[key] = round(val/self.counter*100, 3)
 
     def completeTable(self, tableCards, previousIteration, cardsToFlip):
         if cardsToFlip:
@@ -132,46 +134,6 @@ class Pokerstatter():
                             p.hands[hand.name] = 1
                         break
 
-
-
-        #for h in self.getHighHands(playerHands):
-
-
-        #add highest rank to a list
-        # if len(list) >1
-        # for h in list
-        #  for i in h.kickers
-        #    add kicker[i] to rank
-        #    check how many hands == rank
-        #      if one:
-        #        tie = false
-        #        h.owner.wins++
-        #        break
-        #  if tie:
-        #    for h in hand 
-        #      h.owner.ties++
-
-        # if len([h.rank for h in playerHands if h.rank == winner.rank]) > 1:
-        #     for hand in playerHands:
-        #         if hand.rank == winner.rank:
-        #             for p in self.table.players:
-        #                 if p.id == hand.owner:
-        #                     p.ties += 1
-
-        #                     if hand.name in p.hands:
-        #                         p.hands[hand.name] += 1
-        #                     else:
-        #                         p.hands[hand.name] = 1
-        # else:
-        #     for p in self.table.players:
-        #         if p.id == winner.owner:
-        #             p.wins += 1
-
-        #             if hand.name in p.hands:
-        #                 p.hands[hand.name] += 1
-        #             else:
-        #                 p.hands[hand.name] = 1
-
     def getRoyal(self, suits, player):
         straightFlush = self.getStraightFlush(suits, player)
         if straightFlush and sorted(straightFlush.cards, key=lambda c: c.value)[0].value == 10:
@@ -202,7 +164,7 @@ class Pokerstatter():
                             seqCards[-1] = Card(14, seqCards[-1].suit)
 
                         return Hand(
-                            name=Hands.straight,
+                            name=Hands.straightFlush,
                             owner=player.id,
                             cards=seqCards
                         )

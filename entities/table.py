@@ -1,7 +1,6 @@
 from entities.player import Player
 from entities.card import Card
-from util import suitMap
-
+from entities.suits import Suits
 
 class TableSlot():
 
@@ -25,7 +24,10 @@ class Table():
 
         for i in range(2, 15):
             for j in range(4):
-                self.deck.append(Card(i, suitMap[j]))
+                self.deck.append(Card(i, {0: Suits.Clubs,
+                                          1: Suits.Diamonds,
+                                          2: Suits.Spades,
+                                          3: Suits.Hearts}[j]))
 
     def removeFromDeck(self, card):
         idxs = []
@@ -59,7 +61,6 @@ class Table():
         out = ''
         newline = ''
         for p in self.players:
-            out += newline + '(' + p.toString() + ')'
-            out += '\nHands:\n' + p.handsToString()
+            out += newline + f'\nPlayer: {p.id}  [{p.cardStr()}]\nWin: {p.wins}%   |   Tie:{p.ties}%\n           --Hands--\n{str(p.handStr())}'
             newline = '\n'
         return out

@@ -17,13 +17,6 @@ valueMap = {
     14: "Ace"
 }
 
-suitMap = {
-    0: Suits.Clubs,
-    1: Suits.Diamonds,
-    2: Suits.Spades,
-    3: Suits.Hearts
-}
-
 handScores = {
     "highCard": 0,
     "onePair": 100,

@@ -3,13 +3,13 @@ import time
 
 s = {
     "playerCards":  [
-        [Card(2, Suits.Diamonds),  Card(6, Suits.Hearts)],
-        [Card(2, Suits.Clubs),   Card(3, Suits.Spades)]
+        [Card(8, Suits.Diamonds),  Card(10, Suits.Hearts)],
+        [Card(12, Suits.Spades),   Card(10, Suits.Spades)]
     ],
     "tableCards": [
-        Card(8, Suits.Diamonds),
-        Card(5, Suits.Diamonds),
-        Card(8, Suits.Spades),
+        Card(13, Suits.Spades),
+        Card(14, Suits.Spades),
+        Card(12, Suits.Diamonds),
         Card(11, Suits.Hearts),
         Card(13, Suits.Spades)
     ]
@@ -19,11 +19,6 @@ t = Table(playerCount=2)
 d = Dealer()
 
 d.deal(table=t, seed=s)
-
-d.flip(t)
-
-print("\nPlayers: \n")
-print(t.playersToString())
 
 print("\nTable: \n")
 print(t.tableCardsToString())
@@ -38,5 +33,4 @@ p.evaluate(t)
 end = time.time()
 print(f"Completed in {end - start}s")
 
-print("\nPlayers: \n")
 print(t.playersToString())
