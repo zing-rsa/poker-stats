@@ -36,14 +36,6 @@ class Table():
                 self.deck.pop(i)
                 break
 
-    def tableCardsExposedToString(self):
-        out = ''
-        space = ''
-        for s in self.slots:
-            out = out + space + s.card.str
-            space = ' '
-        return out
-
     def tableCardsToString(self):
         out = ''
         space = ''
@@ -61,6 +53,6 @@ class Table():
         out = ''
         newline = ''
         for p in self.players:
-            out += newline + f'\nPlayer: {p.id}  [{p.cardStr()}]\nWin: {p.wins}%   |   Tie:{p.ties}%\n           --Hands--\n{str(p.handStr())}'
+            out += newline + f'\nPlayer: {p.id}  [{p.cardStr()}]\nWin: {p.wins}%   |   Tie:{p.ties}%\n          --Hands--\n{str(p.handStr())}'
             newline = '\n'
         return out
