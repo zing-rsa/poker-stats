@@ -9,7 +9,18 @@ class Player():
         self.chance = 0
         self.ties = 0
         self.wins = 0
-        self.hands = {}
+        self.hands = {
+            Hands.royalFlush: 0,
+            Hands.straightFlush: 0,
+            Hands.quads: 0,
+            Hands.fullHouse: 0,
+            Hands.flush: 0,
+            Hands.straight: 0,
+            Hands.trips: 0,
+            Hands.twoPair: 0,
+            Hands.onePair: 0,
+            Hands.highCard: 0
+        }
         self.id = Player.counter
         Player.counter += 1
 

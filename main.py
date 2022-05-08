@@ -4,7 +4,8 @@ import time
 s = {
     "playerCards":  [
         [Card(8, Suits.Diamonds),  Card(10, Suits.Hearts)],
-        [Card(12, Suits.Spades),   Card(10, Suits.Spades)]
+        [Card(12, Suits.Spades),   Card(10, Suits.Spades)],
+        [Card(2, Suits.Spades),   Card(5, Suits.Hearts)]
     ],
     "tableCards": [
         Card(13, Suits.Spades),
@@ -15,10 +16,11 @@ s = {
     ]
 }
 
-t = Table(playerCount=2)
+t = Table(playerCount=3)
 d = Dealer()
 
 d.deal(table=t, seed=s)
+d.flip(t)
 
 print("\nTable: \n")
 print(t.tableCardsToString())
