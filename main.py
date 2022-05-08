@@ -2,12 +2,12 @@ from entities import Table, Suits, Card, Pokerstatter, Suits, Dealer
 import time
 
 s = {
-    "playerCards":  [
+    "player_cards":  [
         [Card(8, Suits.Diamonds),  Card(10, Suits.Hearts)],
         [Card(12, Suits.Spades),   Card(10, Suits.Spades)],
         [Card(2, Suits.Spades),   Card(5, Suits.Hearts)]
     ],
-    "tableCards": [
+    "table_cards": [
         Card(13, Suits.Spades),
         Card(14, Suits.Spades),
         Card(12, Suits.Diamonds),
@@ -16,14 +16,14 @@ s = {
     ]
 }
 
-t = Table(playerCount=3)
+t = Table(player_count=3)
 d = Dealer()
 
 d.deal(table=t, seed=s)
 d.flip(t)
 
 print("\nTable: \n")
-print(t.tableCardsToString())
+print(t.table_cards_str())
 
 p = Pokerstatter()
 
@@ -35,4 +35,4 @@ p.evaluate(t)
 end = time.time()
 print(f"Completed in {end - start}s")
 
-print(t.playersToString())
+print(t.players_str())

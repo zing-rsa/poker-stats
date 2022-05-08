@@ -1,6 +1,6 @@
 from entities.suits import Suits
 
-valueMap = {
+value_map = {
     1: 1,
     2: 2,
     3: 3,
@@ -17,15 +17,15 @@ valueMap = {
     14: "Ace"
 }
 
-handScores = {
-    "highCard": 0,
-    "onePair": 100,
-    "twoPair": 200,
+hand_scores = {
+    "high_card": 0,
+    "one_pair": 100,
+    "two_pair": 200,
     "trips": 300,
     "straight": 400,
     "flush": 500,
-    "fullHouse": 600,
+    "full_house": 600,
     "quads": 700,
-    "straightFlush": 800,
-    "royalFlush": 900,
+    "straight_flush": 800,
+    "royal_flush": 900,
 }
