@@ -1,5 +1,3 @@
-from entities.suits import Suits
-
 value_map = {
     1: 1,
     2: 2,

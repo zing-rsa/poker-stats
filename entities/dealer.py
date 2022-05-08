@@ -1,7 +1,5 @@
 
-from entities.suits import Suits
 from entities.table import TableSlot
-from entities.card import Card
 
 
 class Dealer():

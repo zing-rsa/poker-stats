@@ -1,8 +1,8 @@
-from entities.suits import Suits
 from entities.card import Card
 from entities.player import Player
-from entities.hand import Hand, Hands
-from util import value_map
+from entities.hand import Hand
+from util import Hands, value_map
+
 
 class Pokerstatter():
 
@@ -48,7 +48,7 @@ class Pokerstatter():
         for i, player in enumerate(self.table.players):
 
             eval_cards = sorted(player.cards + table_cards,
-                               key=lambda c: c.value, reverse=True)
+                                key=lambda c: c.value, reverse=True)
 
             value_grps = {}
             suit_grps = {}
@@ -112,12 +112,12 @@ class Pokerstatter():
             player_hands += [hand]
             # endregion
 
-        wins = self.find_winning_hands(self.get_max_hands(player_hands), 0)
+        wins = self.compare_kickers(self.get_max_hands(player_hands), 0)
 
         if len(wins) == 1:
             wins[0].owner.wins += 1
         else:
-            for h in wins:        
+            for h in wins:
                 h.owner.ties += 1
 
     def get_royal(self, suits, player):
@@ -282,17 +282,16 @@ class Pokerstatter():
             elif hands[i].rank == max_:
                 all_.append(hands[i])
         return all_
-    
-    def find_winning_hands(self, hands, i):
+
+    def compare_kickers(self, hands, i):
         if len(hands) == 1:
             return hands
         if hands[0].kickers is None:
             return hands
         if i == len(hands[0].kickers):
             return hands
-        
+
         for h in hands:
             h.rank += h.kickers[i].value
 
-        return self.find_winning_hands(self.get_max_hands(hands), i+1)
-        
+        return self.compare_kickers(self.get_max_hands(hands), i+1)

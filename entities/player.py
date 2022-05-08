@@ -1,9 +1,11 @@
-from entities.hand import Hands, Hand
+from entities.hand import Hand
+from util import Hands
+
 
 class Player():
 
     counter = 0
-    
+
     def __init__(self):
         self.cards = [None] * 2
         self.chance = 0
@@ -23,7 +25,7 @@ class Player():
         }
         self.id = Player.counter
         Player.counter += 1
-    
+
     def card_str(self):
         return str(self.cards[0].value)+self.cards[0].suit.name[0]+','+str(self.cards[1].value)+self.cards[1].suit.name[0]
 
@@ -31,6 +33,7 @@ class Player():
         out = ''
         newline = ''
         for key, val in self.hands.items():
-            out += newline + '  ' + key.name + ':' + (" " * (17-len(key.name))) + str(val) + '%'
+            out += newline + '  ' + key.name + ':' + \
+                (" " * (17-len(key.name))) + str(val) + '%'
             newline = '\n'
         return out

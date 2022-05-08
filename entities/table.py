@@ -1,6 +1,7 @@
 from entities.player import Player
 from entities.card import Card
-from entities.suits import Suits
+from util import Suits
+
 
 class TableSlot():
 
@@ -12,7 +13,7 @@ class TableSlot():
 
 class Table():
     players = []
-    slots = [None] * 5
+    slots = [TableSlot(-1, False, None)] * 5
     state = "preflop"
     deck = []
     cards_to_flip = 5
@@ -53,6 +54,7 @@ class Table():
         out = ''
         newline = ''
         for p in self.players:
-            out += newline + f'\nPlayer: {p.id}  [{p.card_str()}]\nWin: {p.wins}%   |   Tie:{p.ties}%\n          --Hands--\n{str(p.hand_str())}'
+            out += newline + \
+                f'\nPlayer: {p.id}  [{p.card_str()}]\nWin: {p.wins}%   |   Tie:{p.ties}%\n          --Hands--\n{str(p.hand_str())}'
             newline = '\n'
         return out

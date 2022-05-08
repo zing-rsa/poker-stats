@@ -1,38 +1,44 @@
-from entities import Table, Suits, Card, Pokerstatter, Suits, Dealer
+from entities import Table, Dealer, Card, Pokerstatter
+from util import Suits
 import time
 
 s = {
     "player_cards":  [
         [Card(8, Suits.Diamonds),  Card(10, Suits.Hearts)],
-        [Card(12, Suits.Spades),   Card(10, Suits.Spades)],
-        [Card(2, Suits.Spades),   Card(5, Suits.Hearts)]
+        [Card(12, Suits.Spades),   Card(10, Suits.Spades)]
     ],
     "table_cards": [
         Card(13, Suits.Spades),
         Card(14, Suits.Spades),
         Card(12, Suits.Diamonds),
-        Card(11, Suits.Hearts),
-        Card(13, Suits.Spades)
+        Card(12, Suits.Clubs)
     ]
 }
 
-t = Table(player_count=3)
-d = Dealer()
+def main():
 
-d.deal(table=t, seed=s)
-d.flip(t)
+    t = Table(player_count=len(s['player_cards']))
+    d = Dealer()
 
-print("\nTable: \n")
-print(t.table_cards_str())
+    d.deal(table=t, seed=s)
 
-p = Pokerstatter()
+    d.flip(t)
 
-start = time.time()
-print('\nBegin evaluate:')
+    print("\nTable: \n")
+    print(t.table_cards_str())
 
-p.evaluate(t)
+    p = Pokerstatter()
 
-end = time.time()
-print(f"Completed in {end - start}s")
+    start = time.time()
+    print('\nBegin evaluate:')
 
-print(t.players_str())
+    p.evaluate(t)
+
+    end = time.time()
+    print(f"Completed in {end - start}s")
+
+    print(t.players_str())
+
+    
+if __name__ == '__main__':
+    main()
