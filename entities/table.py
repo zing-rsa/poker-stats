@@ -1,24 +1,25 @@
 from entities.player import Player
 from entities.card import Card
-from entities.suits import Suits
+from util import Suits
+
 
 class TableSlot():
 
-    def __init__(self, slotId, visible, card):
-        self.slotId = slotId
+    def __init__(self, slot_id, visible, card):
+        self.slot_id = slot_id
         self.visible = visible
         self.card = card
 
 
 class Table():
     players = []
-    slots = [None] * 5
+    slots = [TableSlot(-1, False, None)] * 5
     state = "preflop"
     deck = []
-    cardsToFlip = 5
+    cards_to_flip = 5
 
-    def __init__(self, playerCount):
-        for i in range(playerCount):
+    def __init__(self, player_count):
+        for i in range(player_count):
             p = Player()
             self.players.append(p)
 
@@ -29,22 +30,14 @@ class Table():
                                           2: Suits.Spades,
                                           3: Suits.Hearts}[j]))
 
-    def removeFromDeck(self, card):
+    def remove_from_deck(self, card):
         idxs = []
         for i, c in enumerate(self.deck):
             if c.suit == card.suit and c.value == card.value:
                 self.deck.pop(i)
                 break
 
-    def tableCardsExposedToString(self):
-        out = ''
-        space = ''
-        for s in self.slots:
-            out = out + space + s.card.str
-            space = ' '
-        return out
-
-    def tableCardsToString(self):
+    def table_cards_str(self):
         out = ''
         space = ''
         for s in self.slots:
@@ -57,10 +50,11 @@ class Table():
 
         return out
 
-    def playersToString(self):
+    def players_str(self):
         out = ''
         newline = ''
         for p in self.players:
-            out += newline + f'\nPlayer: {p.id}  [{p.cardStr()}]\nWin: {p.wins}%   |   Tie:{p.ties}%\n           --Hands--\n{str(p.handStr())}'
+            out += newline + \
+                f'\nPlayer: {p.id}  [{p.card_str()}]\nWin: {p.wins}%   |   Tie:{p.ties}%\n          --Hands--\n{str(p.hand_str())}'
             newline = '\n'
         return out

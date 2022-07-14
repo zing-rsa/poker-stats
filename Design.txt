@@ -1,6 +1,0 @@
-completeTable(deck, cardsToFlip):
-    if !len(cardstoflip):
-        getoutcomes
-    else
-        for card in deck:
-            completetable(deck, )

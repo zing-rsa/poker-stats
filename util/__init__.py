@@ -1,1 +1,2 @@
-from util.maps import valueMap, handScores
+from util.maps import value_map, hand_scores
+from util.enums import Hands, Suits

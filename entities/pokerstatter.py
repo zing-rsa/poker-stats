@@ -1,8 +1,8 @@
-from entities.suits import Suits
 from entities.card import Card
 from entities.player import Player
-from entities.hand import Hand, Hands
-from util import valueMap
+from entities.hand import Hand
+from util import Hands, value_map
+
 
 class Pokerstatter():
 
@@ -15,136 +15,123 @@ class Pokerstatter():
             player.ties = 0
 
         self.table = table
-        tablecards = [s.card for s in self.table.slots if s.visible]
+        table_cards = [s.card for s in self.table.slots if s.visible]
 
-        self.completeTable(tablecards, 0, 5 - len(tablecards))
+        self.complete_table(table_cards, 0, 5 - len(table_cards))
 
         for p in self.table.players:
 
-            # for key, val in p.hands.items():
-            #     p.hands[key] = round(val/(p.wins+p.ties)*100, 3)
-            # this needs to be done even when the player doesn't win or tie
+            for key, val in p.hands.items():
+                p.hands[key] = round(val/self.counter*100, 3)
 
             p.wins = round(p.wins/self.counter * 100, 3)
             p.ties = round(p.ties/self.counter * 100, 3)
 
-    def completeTable(self, tableCards, previousIteration, cardsToFlip):
-        if cardsToFlip:
+    def complete_table(self, table_cards, p_i, cards_to_flip):
+        if cards_to_flip:
             for i, card in enumerate(self.table.deck):
-                if i < previousIteration:
+                if i < p_i:
                     continue
 
-                if [c for c in tableCards if c.str == card.str]:
+                if [c for c in table_cards if c.str == card.str]:
                     continue
 
-                newTableCards = [c for c in tableCards] + [card]
-                self.completeTable(newTableCards, i, cardsToFlip-1)
+                newtable_cards = [c for c in table_cards] + [card]
+                self.complete_table(newtable_cards, i, cards_to_flip-1)
         else:
             self.counter += 1
-            self.processOutcomes(tableCards)
+            self.process_outcomes(table_cards)
 
-    def processOutcomes(self, tableCards):
-        playerHands = []
+    def process_outcomes(self, table_cards):
+        player_hands = []
 
         for i, player in enumerate(self.table.players):
 
-            evalCards = sorted(player.cards + tableCards,
-                               key=lambda c: c.value, reverse=True)
+            eval_cards = sorted(player.cards + table_cards,
+                                key=lambda c: c.value, reverse=True)
 
-            valueGroups = {}
-            suitGroups = {}
-            for card in evalCards:
-                if card.suit in suitGroups:
-                    suitGroups[card.suit] += [card]
+            value_grps = {}
+            suit_grps = {}
+            for card in eval_cards:
+                if card.suit in suit_grps:
+                    suit_grps[card.suit] += [card]
                 else:
-                    suitGroups[card.suit] = [card]
-                if card.value in valueGroups:
-                    valueGroups[card.value] += [card]
+                    suit_grps[card.suit] = [card]
+                if card.value in value_grps:
+                    value_grps[card.value] += [card]
                 else:
-                    valueGroups[card.value] = [card]
+                    value_grps[card.value] = [card]
 
             # region hands
-            hand = self.getRoyal(suitGroups, player)
+            hand = self.get_royal(suit_grps, player)
             if hand:
-                playerHands += [hand]
+                player_hands += [hand]
                 continue
 
-            hand = self.getStraightFlush(suitGroups, player)
+            hand = self.get_straight_flush(suit_grps, player, 'outer')
             if hand:
-                playerHands += [hand]
+                player_hands += [hand]
                 continue
 
-            hand = self.getQuads(valueGroups, evalCards, player)
+            hand = self.get_quads(value_grps, eval_cards, player)
             if hand:
-                playerHands += [hand]
+                player_hands += [hand]
                 continue
 
-            hand = self.getFullHouse(valueGroups, player)
+            hand = self.get_full_house(value_grps, player)
             if hand:
-                playerHands += [hand]
+                player_hands += [hand]
                 continue
 
-            hand = self.getFlush(suitGroups, player)
+            hand = self.get_flush(suit_grps, player)
             if hand:
-                playerHands += [hand]
+                player_hands += [hand]
                 continue
 
-            hand = self.getStraight(evalCards, player)
+            hand = self.get_straight(eval_cards, player)
             if hand:
-                playerHands += [hand]
+                player_hands += [hand]
                 continue
 
-            hand = self.getTrips(valueGroups, evalCards, player)
+            hand = self.get_trips(value_grps, eval_cards, player)
             if hand:
-                playerHands += [hand]
+                player_hands += [hand]
                 continue
 
-            hand = self.getTwoPair(valueGroups, evalCards, player)
+            hand = self.get_two_pair(value_grps, eval_cards, player)
             if hand:
-                playerHands += [hand]
+                player_hands += [hand]
                 continue
 
-            hand = self.getOnePair(valueGroups, evalCards, player)
+            hand = self.get_one_pair(value_grps, eval_cards, player)
             if hand:
-                playerHands += [hand]
+                player_hands += [hand]
                 continue
 
-            hand = self.getHighCard(evalCards, player)
-            playerHands += [hand]
+            hand = self.get_high_card(eval_cards, player)
+            player_hands += [hand]
             # endregion
 
-        wins = self.getWinnerOrTie(self.getHighHands(playerHands), 0)
+        wins = self.compare_kickers(self.get_max_hands(player_hands), 0)
 
         if len(wins) == 1:
-            for p in self.table.players:
-                if p.id == wins[0].owner:
-                    p.wins += 1
-                    if hand.name in p.hands:
-                        p.hands[hand.name] += 1
-                    else:
-                        p.hands[hand.name] = 1
+            wins[0].owner.wins += 1
         else:
             for h in wins:
-                for p in self.table.players:
-                    if p.id == h.owner:
-                        p.ties += 1
-                        if hand.name in p.hands:
-                            p.hands[hand.name] += 1
-                        else:
-                            p.hands[hand.name] = 1
-                        break
+                h.owner.ties += 1
 
-    def getRoyal(self, suits, player):
-        straightFlush = self.getStraightFlush(suits, player)
-        if straightFlush and sorted(straightFlush.cards, key=lambda c: c.value)[0].value == 10:
+    def get_royal(self, suits, player):
+        straight_flush = self.get_straight_flush(suits, player, 'inner')
+        if straight_flush and sorted(straight_flush.cards, key=lambda c: c.value)[0].value == 10:
+            player.hands[Hands.royal_flush] += 1
             return Hand(
-                Hands.royalFlush,
-                owner=player.id,
-                cards=straightFlush.cards
+                Hands.royal_flush,
+                owner=player,
+                cards=straight_flush.cards
             )
         return None
 
-    def getStraightFlush(self, suits, player):
+    def get_straight_flush(self, suits, player, caller):
         for key, val in suits.items():
             if len(val) >= 5:
                 cards = val[:]
@@ -152,36 +139,38 @@ class Pokerstatter():
                 if cards[0].value == 14:
                     cards = cards + [Card(1, cards[0].suit)]
 
-                seqCards = []
+                seq_cards = []
                 for c in cards:
-                    if not seqCards or seqCards[-1].value - c.value == 1:
-                        seqCards.append(c)
-                    elif seqCards[-1].value - c.value > 1:
-                        seqCards = [c]
+                    if not seq_cards or seq_cards[-1].value - c.value == 1:
+                        seq_cards.append(c)
+                    elif seq_cards[-1].value - c.value > 1:
+                        seq_cards = [c]
 
-                    if len(seqCards) == 5:
-                        if seqCards[-1].value == 1:
-                            seqCards[-1] = Card(14, seqCards[-1].suit)
-
+                    if len(seq_cards) == 5:
+                        if seq_cards[-1].value == 1:
+                            seq_cards[-1] = Card(14, seqCards[-1].suit)
+                        if caller == 'outer':
+                            player.hands[Hands.straight_flush] += 1
                         return Hand(
-                            name=Hands.straightFlush,
-                            owner=player.id,
-                            cards=seqCards
+                            name=Hands.straight_flush,
+                            owner=player,
+                            cards=seq_cards
                         )
         return None
 
-    def getQuads(self, values, cards, player):
+    def get_quads(self, values, cards, player):
         for key, val in values.items():
             if len(val) == 4:
+                player.hands[Hands.quads] += 1
                 return Hand(
                     name=Hands.quads,
-                    owner=player.id,
+                    owner=player,
                     cards=val,
                     kickers=[[c for c in cards if c.value != key][0]]
                 )
         return None
 
-    def getFullHouse(self, values, player):
+    def get_full_house(self, values, player):
         trips = []
         dubs = []
         for key, val in values.items():
@@ -193,93 +182,97 @@ class Pokerstatter():
                         break
                 break
         if trips and dubs:
+            player.hands[Hands.full_house] += 1
             return Hand(
-                name=Hands.fullHouse,
-                owner=player.id,
+                name=Hands.full_house,
+                owner=player,
                 cards=trips+dubs
-                # this might need work, lookup trips rules
             )
-
         return None
 
-    def getFlush(self, suits, player):
+    def get_flush(self, suits, player):
         for key, val in suits.items():
             if len(val) >= 5:
+                player.hands[Hands.flush] += 1
                 return Hand(
                     name=Hands.flush,
-                    owner=player.id,
+                    owner=player,
                     cards=val[:5],
                     kickers=val[1:5]
                 )
 
         return None
 
-    def getStraight(self, cards, player):
+    def get_straight(self, cards, player):
 
         if cards[0].value == 14:
             cards = cards + [Card(1, cards[0].suit)]
 
-        seqCards = []
+        seq_cards = []
         for c in cards:
-            if not seqCards or seqCards[-1].value - c.value == 1:
-                seqCards.append(c)
-            elif seqCards[-1].value - c.value > 1:
-                seqCards = [c]
+            if not seq_cards or seq_cards[-1].value - c.value == 1:
+                seq_cards.append(c)
+            elif seq_cards[-1].value - c.value > 1:
+                seq_cards = [c]
 
-            if len(seqCards) == 5:
-                if seqCards[-1].value == 1:
-                    seqCards[-1] = Card(14, seqCards[-1].suit)
-
+            if len(seq_cards) == 5:
+                if seq_cards[-1].value == 1:
+                    seq_cards[-1] = Card(14, seq_cards[-1].suit)
+                player.hands[Hands.straight] += 1
                 return Hand(
                     name=Hands.straight,
-                    owner=player.id,
-                    cards=seqCards
+                    owner=player,
+                    cards=seq_cards
                 )
         return None
 
-    def getTrips(self, values, cards, player):
+    def get_trips(self, values, cards, player):
         for key, val in values.items():
             if len(val) == 3:
+                player.hands[Hands.trips] += 1
                 return Hand(
                     name=Hands.trips,
-                    owner=player.id,
+                    owner=player,
                     cards=val,
                     kickers=[c for c in cards if c.value != key][0:2]
                 )
         return None
 
-    def getTwoPair(self, values, cards, player):
+    def get_two_pair(self, values, cards, player):
         pairs = [v for k, v in values.items() if len(v) == 2]
         if len(pairs) > 1:
+            player.hands[Hands.two_pair] += 1
             return Hand(
-                name=Hands.twoPair,
-                owner=player.id,
+                name=Hands.two_pair,
+                owner=player,
                 cards=pairs[0] + pairs[1],
                 kickers=[[c for c in cards if c.value != pairs[0]
                          [0].value and c.value != pairs[1][0].value][0]]
             )
         return None
 
-    def getOnePair(self, values, cards, player):
+    def get_one_pair(self, values, cards, player):
         for key, val in values.items():
             if len(val) == 2:
+                player.hands[Hands.one_pair] += 1
                 return Hand(
-                    name=Hands.onePair,
-                    owner=player.id,
+                    name=Hands.one_pair,
+                    owner=player,
                     cards=val,
                     kickers=[c for c in cards if c.value != key][:3]
                 )
         return None
 
-    def getHighCard(self, cards, player):
+    def get_high_card(self, cards, player):
+        player.hands[Hands.high_card] += 1
         return Hand(
-            name=Hands.highCard,
-            owner=player.id,
+            name=Hands.high_card,
+            owner=player,
             cards=[cards[0]],
             kickers=cards[1:]
         )
 
-    def getHighHands(self, hands):
+    def get_max_hands(self, hands):
         all_ = [hands[0]]
         max_ = hands[0].rank
         for i in range(1, len(hands)):
@@ -289,17 +282,16 @@ class Pokerstatter():
             elif hands[i].rank == max_:
                 all_.append(hands[i])
         return all_
-    
-    def getWinnerOrTie(self, hands, i):
+
+    def compare_kickers(self, hands, i):
         if len(hands) == 1:
             return hands
         if hands[0].kickers is None:
             return hands
         if i == len(hands[0].kickers):
             return hands
-        
+
         for h in hands:
             h.rank += h.kickers[i].value
 
-        return self.getWinnerOrTie(self.getHighHands(hands), i+1)
-        
+        return self.compare_kickers(self.get_max_hands(hands), i+1)

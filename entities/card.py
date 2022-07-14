@@ -1,5 +1,5 @@
-from entities.suits import Suits
-from util import valueMap
+from util import Suits, value_map
+
 
 class Card():
 
@@ -11,6 +11,3 @@ class Card():
         self.str = str(self.value) + self.suit.name[0]
         self.id = Card.counter
         Card.counter += 1
-
-    def toString(self):
-        return f"{valueMap[self.value]} of {self.suit.name}"
